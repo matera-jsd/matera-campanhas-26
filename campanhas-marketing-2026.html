@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campanhas &middot; Marketing 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+  :root{
+    --bg: #FFFFFF;
+    --surface: #F7F2FD;
+    --surface-2: #ECE1FB;
+    --border: #E0D2F5;
+    --text: #2A0055;
+    --text-dim: #5B4488;
+    --text-faint: #6F5D93;
+    --green: #6BFF50;
+    --green-deep: #1F9E0A;
+    --violet: #7E2BE8;
+    --violet-deep: #6100BD;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);}
+  body{
+    color:var(--text);
+    font-family:'Poppins', sans-serif;
+    padding:2.5rem 1.5rem 5rem;
+    line-height:1.5;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  h1,h2,h3{font-family:'Poppins', sans-serif;text-wrap:balance;margin:0;}
+  p{font-family:'Poppins', sans-serif;}
+
+  header{
+    border-bottom:1px solid var(--border);
+    padding-bottom:1.75rem;
+    margin-bottom:2.25rem;
+  }
+  .eyebrow{
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#37006B;
+    margin-bottom:0.6rem;
+    font-weight:600;
+  }
+  h1{
+    font-size:clamp(1.9rem,4vw,2.6rem);
+    font-weight:800;
+    letter-spacing:-0.01em;
+    margin-top:0.5rem;
+    margin-bottom:0.5rem;
+    color:#6100BD;
+  }
+  header p{color:var(--text-dim);font-size:1.02rem;max-width:38em;margin:0;}
+
+  /* ===== Painel "Hoje" ===== */
+  .today-panel{
+    margin-top:2.25rem;
+    background:#6100BD;
+    border:1px solid #4B0090;
+    border-radius:14px;
+    padding:1.25rem 1.4rem;
+    color:#FFFFFF;
+  }
+  .today-panel-eyebrow{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    font-size:0.7rem;font-weight:700;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--green);
+  }
+  .today-panel-eyebrow::before{
+    content:"";width:0.5rem;height:0.5rem;border-radius:50%;
+    background:var(--green);box-shadow:0 0 8px 1px var(--green);
+  }
+  .today-tabs{
+    display:flex;gap:0.5rem;margin:0.8rem 0 1.25rem;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+  }
+  .today-tab-btn{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.8rem;font-weight:600;padding:0.5rem 1rem;border:none;
+    background:transparent;color:rgba(255,255,255,0.6);
+    border-bottom:2px solid transparent;transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .today-tab-btn:hover{color:#FFFFFF;}
+  .today-tab-btn.active{color:#FFFFFF;border-bottom-color:var(--green);}
+  .today-tab-content[hidden]{display:none;}
+  .today-panel-full{display:block;font-size:1.2rem;font-weight:700;margin-top:0.35rem;text-transform:capitalize;}
+  .today-panel-label{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#EADFF9;margin:1.1rem 0 0.6rem;}
+  .today-deliveries-list{list-style:none;padding:0;margin:0;}
+  .today-deliveries-list li{font-size:0.9rem;margin-bottom:0.4rem;}
+  .today-empty{font-size:0.85rem;color:#EADFF9;opacity:0.8;}
+  .today-campaign-group{margin-bottom:0.6rem;}
+  .today-campaign-group summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;gap:0.6rem;
+    font-size:0.9rem;font-weight:700;padding:0.6rem 0.7rem;border-radius:8px;
+    background:rgba(255,255,255,0.1);transition:background 0.15s ease;color:var(--green);
+  }
+  .today-campaign-group summary::-webkit-details-marker{display:none;}
+  .today-campaign-group summary::before{
+    content:"▸";font-size:1.4rem;color:var(--green);width:0.8rem;flex:none;
+    transition:transform 0.2s ease;font-weight:300;
+  }
+  .today-campaign-group[open] summary::before{transform:rotate(90deg) scaleX(0.8);}
+  .today-campaign-group summary:hover{background:rgba(255,255,255,0.15);}
+  .today-campaign-dot{
+    width:0.6rem;height:0.6rem;border-radius:50%;flex:none;
+  }
+  .today-campaign-list{margin:0.5rem 0 0;padding:0 0 0 0.7rem;list-style:none;}
+  .today-entrega-item{
+    display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;margin-bottom:0.5rem;
+    padding:0.5rem 0.7rem;background:rgba(255,255,255,0.05);border-radius:6px;
+  }
+  .today-entrega-titulo{flex:1;color:#FFFFFF;font-weight:600;}
+  .today-entrega-tipo{font-size:0.75rem;background:rgba(255,255,255,0.15);padding:0.25rem 0.5rem;border-radius:4px;color:#EADFF9;white-space:nowrap;}
+  .today-entrega-status{
+    display:inline-flex;align-items:center;gap:0.3rem;font-size:0.75rem;font-weight:600;
+    padding:0.25rem 0.5rem;border-radius:4px;white-space:nowrap;color:#FFFFFF;
+  }
+  .today-entrega-responsavel{font-size:0.75rem;color:#EADFF9;white-space:nowrap;}
+
+  /* ===== Filtros ===== */
+  .cat-filter,.type-filter{display:flex;flex-wrap:wrap;gap:0.5rem;}
+  .cat-filter{margin-bottom:1rem;}
+  .type-filter{margin-bottom:1.75rem;}
+  .filter-label{
+    font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--text-faint);margin-bottom:0.5rem;
+  }
+  .filter-label-top{
+    margin-top:2.25rem;border-top:1px solid var(--border);padding-top:1.75rem;
+  }
+  .cat-btn,.type-btn{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.7rem;font-weight:600;padding:0.42rem 0.85rem;
+    border-radius:8px;border:1px solid var(--border);
+    background:var(--surface);color:var(--text-dim);
+    transition:background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .cat-btn:hover,.type-btn:hover{background:var(--surface-2);color:var(--text);}
+  .cat-btn.active{background:#6100BD;border-color:#6100BD;color:#FFFFFF;}
+  .type-btn.active{background:var(--text);border-color:var(--text);color:#FFFFFF;}
+  .cat-btn:focus-visible,.type-btn:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+
+  /* Bolinha indicadora por categoria (edite as cores conforme as categorias reais) */
+  .cat-btn[data-filter]::before{
+    content:"";display:inline-block;width:0.5rem;height:0.5rem;
+    border-radius:50%;margin-right:0.45rem;vertical-align:middle;
+    background:var(--dot-color, var(--violet-deep));
+  }
+  .cat-btn.active::before{background:#FFFFFF;}
+
+  /* ===== Calendário (carrossel) ===== */
+  .cal-carousel{max-width:960px;margin:0 auto 0.5rem;}
+  .cal-nav{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.9rem;}
+  .cal-nav-btn{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.82rem;font-weight:600;padding:0.55rem 1.05rem;
+    border-radius:8px;border:1px solid var(--border);
+    background:var(--surface);color:var(--text-dim);
+    display:inline-flex;align-items:center;gap:0.4rem;
+    transition:background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .cal-nav-btn:hover:not(:disabled){background:var(--surface-2);color:var(--text);}
+  .cal-nav-btn:disabled{opacity:0.35;cursor:not-allowed;}
+  .cal-nav-btn:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  .cal-dots{display:flex;gap:0.4rem;}
+  .cal-dot{width:0.5rem;height:0.5rem;border-radius:50%;border:none;background:var(--border);cursor:pointer;padding:0;}
+  .cal-dot.active{background:var(--violet-deep);}
+  .cal-dot:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  .cal-viewport{overflow:hidden;}
+  .cal-track{display:flex;gap:0.9rem;transition:transform 0.3s ease;}
+  .month{
+    background:#FFFFFF;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:1rem 0.9rem 1.1rem;
+  }
+  .month h2{
+    font-size:1rem;font-weight:700;color:var(--violet-deep);
+    margin-bottom:0.9rem;display:flex;align-items:baseline;
+    justify-content:space-between;gap:0.5rem;
+  }
+  .month h2 span{
+    font-size:0.6rem;color:var(--text-faint);letter-spacing:0.05em;font-weight:400;
+  }
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.2rem;}
+  .dow{
+    font-size:0.58rem;color:var(--text-faint);text-align:center;
+    letter-spacing:0.04em;text-transform:uppercase;padding-bottom:0.25rem;
+  }
+  .day{
+    aspect-ratio:1/1;border-radius:8px;border:1px solid transparent;
+    padding:0.2rem 0.1rem;display:flex;flex-wrap:wrap;
+    justify-content:center;align-content:flex-start;gap:0.15rem;
+    transition:opacity 0.2s ease, background 0.2s ease;
+  }
+  .day.empty{background:transparent;}
+  .day.filtered-out{opacity:0.3;}
+  .daynum{
+    flex-basis:100%;text-align:center;font-size:0.72rem;line-height:1.4;
+    color:var(--text-faint);font-variant-numeric:tabular-nums;
+  }
+  .day.active{background:var(--surface-2);cursor:pointer;}
+  .day.active .daynum{color:var(--text);font-weight:600;}
+  .day.today .daynum{color:#FFFFFF;}
+  .day.today{background:var(--violet-deep);box-shadow:0 0 0 1.5px var(--green-deep);}
+
+  .day a.chip{
+    width:0.3rem;height:0.3rem;padding:0;border-radius:50%;border:none;
+    font-size:0;line-height:0;color:transparent;text-indent:-9999px;
+    overflow:hidden;flex:none;text-decoration:none;cursor:pointer;
+    background:var(--violet-deep);
+  }
+  .day.active:hover{filter:brightness(0.96);}
+  .day.active:focus-visible{outline:2px solid var(--green);outline-offset:1px;}
+
+  /* ===== Itens de entrega (usados no drawer) ===== */
+  .detail{
+    border:1px solid var(--border);border-radius:10px;margin-bottom:0.6rem;
+    background:var(--surface);overflow:hidden;
+  }
+  .detail summary{
+    list-style:none;cursor:pointer;padding:0.9rem 1rem;
+    display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;
+  }
+  .detail summary::-webkit-details-marker{display:none;}
+  .detail summary::after{
+    content:"+";color:var(--violet-deep);font-size:1.2rem;font-weight:400;
+    line-height:1;flex:none;margin-left:auto;padding-left:0.5rem;
+  }
+  .detail[open] summary::after{content:"\2212";}
+  .det-title{font-size:0.92rem;font-weight:600;color:var(--text);margin-right:0.15rem;}
+  .phase-tag{
+    font-size:0.68rem;color:var(--text-dim);background:var(--surface-2);
+    padding:0.2rem 0.55rem;border-radius:8px;flex:none;
+  }
+  .detail-body{padding:0.6rem 1rem 1.1rem;font-size:0.88rem;color:var(--text-dim);}
+  .detail-body .formato{font-size:0.78rem;color:var(--text-faint);margin-bottom:0.5rem;}
+  .detail-body .msg{font-size:1.05rem;font-weight:700;color:var(--violet-deep);margin-bottom:0.5rem;}
+  /* ===== Controle de status (dropdown) ===== */
+  .status-field{margin-top:0.6rem;}
+  .status-label{
+    display:block;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--text-faint);margin-bottom:0.5rem;
+  }
+  .status-dot-sm{width:0.55rem;height:0.55rem;border-radius:50%;flex:none;}
+  .status-badge{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;font-size:0.78rem;font-weight:600;
+    padding:0.4rem 0.75rem;border-radius:8px;border:1.5px solid var(--border);
+    background:#FFFFFF;display:inline-flex;align-items:center;gap:0.5rem;
+    transition:border-color 0.15s ease, color 0.15s ease;
+  }
+  .status-badge::after{content:"▾";font-size:0.6rem;opacity:0.55;margin-left:0.15rem;}
+  .status-menu{
+    position:fixed;top:0;left:0;background:#FFFFFF;
+    border:1px solid var(--border);border-radius:10px;
+    box-shadow:0 10px 28px -8px rgba(42,0,85,0.3);padding:0.35rem;
+    display:none;flex-direction:column;gap:0.1rem;z-index:60;min-width:190px;
+    max-height:min(320px, 60vh);overflow-y:auto;
+  }
+  .status-menu.is-open{display:flex;}
+  .status-menu-item{
+    appearance:none;border:none;background:none;text-align:left;cursor:pointer;
+    font-family:'Poppins', sans-serif;font-size:0.8rem;padding:0.5rem 0.6rem;border-radius:6px;
+    color:var(--text-dim);display:flex;align-items:center;gap:0.55rem;
+  }
+  .status-menu-item:hover{background:var(--surface-2);}
+  .status-menu-item.is-current{font-weight:700;color:var(--text);background:var(--surface-2);}
+  .field-multi-item{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;font-size:0.8rem;
+    padding:0.5rem 0.6rem;border-radius:6px;color:var(--text-dim);
+    display:flex;align-items:center;gap:0.55rem;
+  }
+  .field-multi-item:hover{background:var(--surface-2);}
+  .field-multi-item input[type="checkbox"]{margin-right:0.1rem;}
+
+  /* ===== Botão de campo com dropdown (ex.: Responsável) ===== */
+  .field-select-btn{
+    width:100%;text-align:left;appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.9rem;padding:0.55rem 0.7rem;border:1px solid var(--border);border-radius:8px;
+    background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;
+  }
+  .field-select-btn:hover{border-color:var(--violet);}
+  .field-select-btn::after{content:"▾";font-size:0.7rem;opacity:0.6;flex:none;}
+  .field-select-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .field-select-value.placeholder{color:var(--text-faint);}
+
+  /* ===== Drawer ===== */
+  .drawer-overlay{
+    position:fixed;inset:0;background:rgba(42,0,85,0.35);
+    opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:40;
+  }
+  .drawer-overlay.is-open{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:min(420px,90vw);
+    background:#FFFFFF;box-shadow:-8px 0 30px -8px rgba(42,0,85,0.3);
+    transform:translateX(100%);transition:transform 0.25s ease;z-index:41;
+    display:flex;flex-direction:column;
+  }
+  .drawer.is-open{transform:translateX(0);}
+  .drawer-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);
+  }
+  .drawer-close{
+    appearance:none;border:none;background:none;font-size:1.5rem;
+    line-height:1;cursor:pointer;color:var(--text-dim);
+  }
+  .drawer-body{padding:1.4rem;overflow-y:auto;font-size:0.9rem;color:var(--text-dim);}
+  .drawer-body .msg{font-size:1.1rem;font-weight:700;color:var(--violet-deep);margin-bottom:0.5rem;}
+
+  /* ===== Cabeçalho: título + ações ===== */
+  .header-top{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:1rem;flex-wrap:wrap;
+  }
+  .header-title{min-width:0;}
+
+  /* ===== Ações: cadastro ===== */
+  .actions-bar{display:flex;flex-wrap:wrap;gap:0.6rem;flex:none;}
+  .primary-btn{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.82rem;font-weight:600;padding:0.6rem 1.1rem;
+    border-radius:8px;border:1px solid #6100BD;background:#6100BD;color:#FFFFFF;
+    display:inline-flex;align-items:center;gap:0.4rem;
+    transition:background 0.18s ease;
+  }
+  .primary-btn:hover{background:#4B0090;}
+  .primary-btn.secondary{background:#FFFFFF;color:#6100BD;}
+  .primary-btn.secondary:hover{background:var(--surface-2);}
+  .primary-btn:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+
+  /* ===== Modal (formulários de cadastro) ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(42,0,85,0.35);
+    opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:50;
+  }
+  .modal-overlay.is-open{opacity:1;pointer-events:auto;}
+  .modal{
+    position:fixed;top:50%;left:50%;width:min(480px,92vw);max-height:86vh;overflow-y:auto;
+    background:#FFFFFF;border-radius:14px;box-shadow:0 20px 60px -12px rgba(42,0,85,0.35);
+    transform:translate(-50%,-46%);opacity:0;pointer-events:none;z-index:51;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+  }
+  .modal.is-open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%);}
+  .modal-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.1rem 1.3rem;border-bottom:1px solid var(--border);
+    background:var(--violet-deep);
+  }
+  .modal-header .eyebrow{
+    color:#FFFFFF;
+  }
+  .modal-close{appearance:none;border:none;background:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#FFFFFF;}
+  .modal-body{padding:1.3rem;}
+  .form-field{margin-bottom:1rem;}
+  .form-field label{
+    display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;
+    text-transform:uppercase;color:var(--text-faint);margin-bottom:0.35rem;
+  }
+  .form-field input[type="text"],
+  .form-field input[type="date"],
+  .form-field input[type="number"],
+  .form-field input[type="password"],
+  .form-field select,
+  .form-field textarea{
+    width:100%;font-family:'Poppins', sans-serif;font-size:0.9rem;
+    padding:0.55rem 0.7rem;border:1px solid var(--border);border-radius:8px;
+    background:var(--surface);color:var(--text);
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .form-field input[type="text"]:focus,
+  .form-field input[type="date"]:focus,
+  .form-field input[type="number"]:focus,
+  .form-field input[type="password"]:focus,
+  .form-field select:focus,
+  .form-field textarea:focus{
+    outline:none;border-color:var(--violet);box-shadow:0 0 0 3px rgba(126,43,232,0.15);
+  }
+  .form-field input[type="number"]{-moz-appearance:textfield;}
+  .form-field input[type="number"]::-webkit-outer-spin-button,
+  .form-field input[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+  .form-field input[type="color"]{
+    width:100%;height:2.4rem;border:1px solid var(--border);border-radius:8px;
+    padding:0.2rem;background:var(--surface);cursor:pointer;
+  }
+  .form-field textarea{resize:vertical;min-height:80px;}
+  .choice-grid{display:flex;flex-wrap:wrap;gap:0.5rem;}
+  .choice-pill{
+    display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;
+    font-family:'Poppins', sans-serif;font-size:0.78rem;font-weight:600;
+    padding:0.42rem 0.8rem;border-radius:8px;border:1px solid var(--border);
+    background:var(--surface);color:var(--text-dim);
+    transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .choice-pill input{display:none;}
+  .choice-pill:hover{background:var(--surface-2);}
+  .choice-pill.is-checked{background:#6100BD;border-color:#6100BD;color:#FFFFFF;}
+  #fEntTipoAcaoSubtipos .choice-pill{background:var(--surface-2);border-color:var(--violet);color:var(--violet-deep);}
+  #fEntTipoAcaoSubtipos .choice-pill:hover{background:#DCC6F7;}
+  #fEntTipoAcaoSubtipos .choice-pill.is-checked{background:var(--violet-deep);border-color:var(--violet-deep);color:#FFFFFF;}
+  .entrega-tipo-box{
+    background:var(--surface-2);border:1.5px solid var(--violet);border-radius:10px;
+    padding:1rem 1rem 0.3rem;margin-bottom:1rem;
+  }
+  .form-hint{font-size:0.75rem;color:var(--text-faint);margin-top:0.35rem;}
+  .form-actions{display:flex;justify-content:flex-end;gap:0.6rem;margin-top:1.2rem;}
+  .btn-primary,.btn-secondary{
+    appearance:none;cursor:pointer;font-family:'Poppins', sans-serif;
+    font-size:0.85rem;font-weight:600;padding:0.6rem 1.1rem;border-radius:8px;
+  }
+  .btn-primary{background:#6100BD;border:1px solid #6100BD;color:#FFFFFF;}
+  .btn-primary:hover{background:#4B0090;}
+  .btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);}
+  .btn-secondary:hover{background:var(--surface-2);}
+
+  /* ===== Formulário em blocos (accordion) ===== */
+  .form-section{border:1px solid var(--border);border-radius:10px;margin-bottom:0.8rem;overflow:hidden;}
+  .form-section summary{
+    list-style:none;cursor:pointer;padding:0.75rem 1rem;
+    font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--text-dim);background:var(--surface);
+    display:flex;align-items:center;justify-content:space-between;gap:0.5rem;
+  }
+  .form-section summary::-webkit-details-marker{display:none;}
+  .form-section summary::after{content:"+";color:var(--violet-deep);font-size:1rem;line-height:1;}
+  .form-section[open] summary::after{content:"−";}
+  .form-section .form-section-body{padding:1rem;}
+  .two-col{display:flex;gap:0.7rem;}
+  .two-col .form-field{flex:1;}
+
+  /* ===== Painel de leitura da campanha (drawer) ===== */
+  .brief-section{margin-bottom:1.25rem;}
+  .brief-section h4{
+    font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--violet-deep);margin:0 0 0.7rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);
+  }
+  .brief-field{margin-bottom:0.65rem;}
+  .brief-field:last-child{margin-bottom:0;}
+  .brief-field .k{display:block;font-size:0.68rem;color:var(--text-faint);margin-bottom:0.15rem;}
+  .brief-field .v{font-size:0.9rem;color:var(--text);white-space:pre-wrap;}
+  .brief-field .v a{color:var(--violet-deep);word-break:break-all;}
+
+  /* ===== Seletor de tipo de campanha ===== */
+  .tipo-cards{display:flex;flex-direction:column;gap:0.75rem;}
+  .tipo-card{
+    appearance:none;cursor:pointer;text-align:left;font-family:'Poppins', sans-serif;
+    border:1px solid var(--border);border-radius:12px;background:var(--surface);
+    padding:1rem 1.1rem;display:flex;flex-direction:column;gap:0.3rem;
+    transition:border-color 0.18s ease, background 0.18s ease;
+  }
+  .tipo-card:hover{background:var(--surface-2);border-color:var(--violet-deep);}
+  .tipo-card:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  .tipo-card strong{font-size:0.95rem;color:var(--text);}
+  .tipo-card span{font-size:0.8rem;color:var(--text-dim);}
+
+  .tipo-badge{
+    display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;
+    text-transform:uppercase;padding:0.3rem 0.65rem;border-radius:8px;margin-bottom:1rem;
+  }
+  .tipo-badge-produto{background:var(--surface-2);color:var(--violet-deep);}
+  .tipo-badge-institucional{background:#FFF3D6;color:#8A5B00;}
+
+  /* ===== Login ===== */
+  .login-overlay{
+    position:fixed;inset:0;
+    background:radial-gradient(circle at 30% 20%, #7E2BE8 0%, #2A0055 65%);
+    display:flex;align-items:center;justify-content:center;
+    z-index:1000;padding:1.5rem;
+  }
+  .login-card{
+    background:#FFFFFF;border-radius:18px;padding:2.25rem 2rem;
+    width:min(380px,100%);box-shadow:0 24px 70px -12px rgba(0,0,0,0.55);
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .login-lock{
+    width:2.75rem;height:2.75rem;border-radius:50%;
+    background:var(--surface-2);display:flex;align-items:center;justify-content:center;
+    margin-bottom:1rem;
+  }
+  .login-lock svg{width:1.3rem;height:1.3rem;}
+  .login-card h1{color:#6100BD;font-size:1.5rem;font-weight:800;margin:0.3rem 0 0.6rem;}
+  .login-card p{color:var(--text-dim);font-size:0.9rem;margin:0 0 1.4rem;}
+  .login-card .form-field{margin-bottom:1.2rem;}
+  .login-card input[type="password"]{
+    font-size:1.1rem;letter-spacing:0.2em;padding:0.75rem 0.9rem;
+  }
+  .login-card .btn-primary{
+    padding:0.75rem 1.1rem;font-size:0.92rem;letter-spacing:0.01em;
+    box-shadow:0 8px 20px -6px rgba(97,0,189,0.55);
+    transition:background 0.18s ease, transform 0.1s ease, box-shadow 0.18s ease;
+  }
+  .login-card .btn-primary:hover{background:#4B0090;box-shadow:0 10px 24px -6px rgba(97,0,189,0.65);}
+  .login-card .btn-primary:active{transform:scale(0.98);}
+  .login-erro{
+    display:none;color:#C62828;font-size:0.82rem;font-weight:600;
+    background:#FDECEA;border-radius:8px;padding:0.55rem 0.7rem;margin:-0.45rem 0 1rem;
+  }
+</style>
+</head>
+<body>
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-lock">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 10V8a6 6 0 1112 0v2M5 10h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z" stroke="#6100BD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Marketing</div>
+    <h1>Campanhas 2026</h1>
+    <p>Entre com o login da equipe para continuar.</p>
+    <div class="form-field">
+      <label for="loginEmail">E-mail</label>
+      <input type="email" id="loginEmail" placeholder="equipe@empresa.com">
+    </div>
+    <div class="form-field">
+      <label for="loginSenha">Senha</label>
+      <input type="password" id="loginSenha" placeholder="••••••••">
+    </div>
+    <div class="login-erro" id="loginErro">Login incorreto. Tente novamente.</div>
+    <button type="button" class="btn-primary" id="loginBtn" style="width:100%;justify-content:center;">Entrar</button>
+  </div>
+</div>
+<div class="wrap">
+  <header>
+    <div class="header-top">
+      <div class="header-title">
+        <div class="eyebrow">Marketing</div>
+        <h1>Campanhas 2026</h1>
+      </div>
+      <div class="actions-bar">
+        <button type="button" class="primary-btn" id="btnNovaCampanha">+ Cadastrar nova campanha</button>
+        <button type="button" class="primary-btn secondary" id="btnNovaEntrega">+ Cadastrar nova entrega</button>
+      </div>
+    </div>
+    <p>Calend&aacute;rio - 2&ordm; Semestre 2026</p>
+  </header>
+
+  <section class="today-panel" id="todayPanel" aria-live="polite">
+    <span class="today-panel-eyebrow">Entregas</span>
+    <div class="today-tabs">
+      <button type="button" class="today-tab-btn active" data-tab="hoje">Hoje</button>
+      <button type="button" class="today-tab-btn" data-tab="semana">Esta Semana</button>
+      <button type="button" class="today-tab-btn" data-tab="proxima">Próxima Semana</button>
+    </div>
+
+    <div class="today-tab-content" data-content="hoje">
+      <span class="today-panel-full" id="todayFull">&mdash;</span>
+      <div class="today-panel-label">Entregas de hoje</div>
+      <div id="todayDeliveries"><span class="today-empty">Nenhuma entrega cadastrada para hoje.</span></div>
+    </div>
+
+    <div class="today-tab-content" data-content="semana" hidden>
+      <span class="today-panel-full" id="weekFull">&mdash;</span>
+      <div class="today-panel-label">Entregas da semana</div>
+      <div id="weekDeliveries"><span class="today-empty">Nenhuma entrega cadastrada para esta semana.</span></div>
+    </div>
+
+    <div class="today-tab-content" data-content="proxima" hidden>
+      <span class="today-panel-full" id="nextweekFull">&mdash;</span>
+      <div class="today-panel-label">Entregas da próxima semana</div>
+      <div id="nextweekDeliveries"><span class="today-empty">Nenhuma entrega cadastrada para a próxima semana.</span></div>
+    </div>
+  </section>
+
+  <div class="filter-label filter-label-top">Campanhas Cadastradas</div>
+  <nav class="cat-filter" aria-label="Filtrar por categoria de campanha">
+  </nav>
+  <div class="filter-label">Tipo de entregas</div>
+  <nav class="type-filter" aria-label="Filtrar por tipo de conteúdo">
+  </nav>
+
+  <div class="cal-carousel">
+    <div class="cal-nav">
+      <button type="button" class="cal-nav-btn" id="calPrev" aria-label="Mês anterior">&larr; Anterior</button>
+      <div class="cal-dots" id="calDots"></div>
+      <button type="button" class="cal-nav-btn" id="calNext" aria-label="Próximo mês">Próximo &rarr;</button>
+    </div>
+    <div class="cal-viewport">
+    <div class="cal-track" id="calTrack">
+  <!-- JULHO -->
+  <section class="month">
+    <h2>Julho 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div><div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day"><span class="daynum">31</span></div>
+      <div class="day empty"></div><div class="day empty"></div>
+    </div>
+  </section>
+
+  <!-- AGOSTO -->
+  <section class="month">
+    <h2>Agosto 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day"><span class="daynum">31</span></div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+    </div>
+  </section>
+
+  <!-- SETEMBRO -->
+  <section class="month">
+    <h2>Setembro 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+    </div>
+  </section>
+
+  <!-- OUTUBRO -->
+  <section class="month">
+    <h2>Outubro 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day"><span class="daynum">31</span></div>
+      <div class="day empty"></div>
+    </div>
+  </section>
+
+  <!-- NOVEMBRO -->
+  <section class="month">
+    <h2>Novembro 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+    </div>
+  </section>
+
+  <!-- DEZEMBRO -->
+  <section class="month">
+    <h2>Dezembro 2026 <span></span></h2>
+    <div class="grid">
+      <div class="dow">Seg</div><div class="dow">Ter</div><div class="dow">Qua</div><div class="dow">Qui</div><div class="dow">Sex</div><div class="dow">S&aacute;b</div><div class="dow">Dom</div>
+      <div class="day empty"></div>
+      <div class="day"><span class="daynum">1</span></div>
+      <div class="day"><span class="daynum">2</span></div>
+      <div class="day"><span class="daynum">3</span></div>
+      <div class="day"><span class="daynum">4</span></div>
+      <div class="day"><span class="daynum">5</span></div>
+      <div class="day"><span class="daynum">6</span></div>
+      <div class="day"><span class="daynum">7</span></div>
+      <div class="day"><span class="daynum">8</span></div>
+      <div class="day"><span class="daynum">9</span></div>
+      <div class="day"><span class="daynum">10</span></div>
+      <div class="day"><span class="daynum">11</span></div>
+      <div class="day"><span class="daynum">12</span></div>
+      <div class="day"><span class="daynum">13</span></div>
+      <div class="day"><span class="daynum">14</span></div>
+      <div class="day"><span class="daynum">15</span></div>
+      <div class="day"><span class="daynum">16</span></div>
+      <div class="day"><span class="daynum">17</span></div>
+      <div class="day"><span class="daynum">18</span></div>
+      <div class="day"><span class="daynum">19</span></div>
+      <div class="day"><span class="daynum">20</span></div>
+      <div class="day"><span class="daynum">21</span></div>
+      <div class="day"><span class="daynum">22</span></div>
+      <div class="day"><span class="daynum">23</span></div>
+      <div class="day"><span class="daynum">24</span></div>
+      <div class="day"><span class="daynum">25</span></div>
+      <div class="day"><span class="daynum">26</span></div>
+      <div class="day"><span class="daynum">27</span></div>
+      <div class="day"><span class="daynum">28</span></div>
+      <div class="day"><span class="daynum">29</span></div>
+      <div class="day"><span class="daynum">30</span></div>
+      <div class="day"><span class="daynum">31</span></div>
+      <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+    </div>
+  </section>
+    </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="eyebrow" id="drawerTitle">Detalhe da a&ccedil;&atilde;o</div>
+    <button class="drawer-close" id="drawerClose" aria-label="Fechar painel">&times;</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+  <div class="modal-header">
+    <div class="eyebrow" id="modalTitle">Cadastro</div>
+    <button class="modal-close" id="modalClose" aria-label="Fechar">&times;</button>
+  </div>
+  <div class="modal-body" id="modalBody"></div>
+</div>
+
+<div class="status-menu" id="statusMenu"></div>
+<div class="status-menu" id="fieldMultiMenu"></div>
+
+<script>
+(function(){
+  var SUPABASE_URL = "https://sdapyfcvfrybvphfqkjl.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_aTMxy2K97vkO8_ThDkNQCg_g9Iibjru";
+  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  var loginOverlay = document.getElementById("loginOverlay");
+  var loginEmailInput = document.getElementById("loginEmail");
+  var loginSenhaInput = document.getElementById("loginSenha");
+  var loginErro = document.getElementById("loginErro");
+  var loginBtn = document.getElementById("loginBtn");
+
+  function mostrarErroLogin(msg){
+    loginErro.textContent = msg;
+    loginErro.style.display = "block";
+  }
+  function tentarLogin(){
+    loginErro.style.display = "none";
+    var email = loginEmailInput.value.trim();
+    var senha = loginSenhaInput.value;
+    if(!email || !senha){ mostrarErroLogin("Preencha e-mail e senha."); return; }
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Entrando...";
+    supabaseClient.auth.signInWithPassword({ email: email, password: senha }).then(function(res){
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Entrar";
+      if(res.error){
+        mostrarErroLogin("Login incorreto. Tente novamente.");
+        loginSenhaInput.value = "";
+        loginSenhaInput.focus();
+        return;
+      }
+      loginOverlay.remove();
+      iniciarApp();
+    });
+  }
+  loginBtn.addEventListener("click", tentarLogin);
+  [loginEmailInput, loginSenhaInput].forEach(function(input){
+    input.addEventListener("keydown", function(e){ if(e.key === "Enter") tentarLogin(); });
+  });
+
+  supabaseClient.auth.getSession().then(function(res){
+    if(res.data && res.data.session){
+      loginOverlay.remove();
+      iniciarApp();
+    } else {
+      loginEmailInput.focus();
+    }
+  });
+
+  var MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  var DIAS = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+  function pad2(n){ return (n < 10 ? "0" : "") + n; }
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function escapeAttr(val){
+    if(val === undefined || val === null) return "";
+    return escapeHtml(val);
+  }
+
+  // ---- Dados (campanhas e entregas cadastradas, agora vindos do Supabase) ----
+  var store = { campanhas: [], entregas: [] };
+  function saveStore(){ /* persistência acontece direto no Supabase em cada operação */ }
+
+  function carregarDados(){
+    return Promise.all([
+      supabaseClient.from("campanhas").select("payload"),
+      supabaseClient.from("entregas").select("payload")
+    ]).then(function(results){
+      var campanhasRes = results[0], entregasRes = results[1];
+      if(campanhasRes.error){ alert("Erro ao carregar campanhas: " + campanhasRes.error.message); }
+      if(entregasRes.error){ alert("Erro ao carregar entregas: " + entregasRes.error.message); }
+      store.campanhas = campanhasRes.data ? campanhasRes.data.map(function(r){ return r.payload; }) : [];
+      store.entregas = entregasRes.data ? entregasRes.data.map(function(r){ return r.payload; }) : [];
+    });
+  }
+  function limparElementosDinamicos(){
+    document.querySelectorAll(".cat-btn[data-filter]").forEach(function(b){ b.remove(); });
+    document.querySelectorAll(".type-btn[data-type-filter]").forEach(function(b){ b.remove(); });
+    document.querySelectorAll("a.chip").forEach(function(c){ c.remove(); });
+    document.querySelectorAll(".day.active").forEach(function(d){ d.classList.remove("active"); });
+  }
+  function renderTudo(){
+    limparElementosDinamicos();
+    store.campanhas.forEach(ensureCatButton);
+    store.entregas.forEach(function(entrega){
+      if(entrega.tipoAcaoCategoria){ ensureTypeButton(slugify(entrega.tipoAcaoCategoria), entrega.tipoAcaoCategoria); }
+      ensureChip(entrega);
+    });
+    paintToday();
+    applyFilters();
+    refreshStatusControls();
+  }
+  var realtimeWired = false;
+  function wireRealtime(){
+    if(realtimeWired) return;
+    realtimeWired = true;
+    supabaseClient
+      .channel("campanhas2026-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "campanhas" }, function(){ carregarDados().then(renderTudo); })
+      .on("postgres_changes", { event: "*", schema: "public", table: "entregas" }, function(){ carregarDados().then(renderTudo); })
+      .subscribe();
+  }
+  function iniciarApp(){
+    carregarDados().then(function(){
+      renderTudo();
+      wireRealtime();
+    });
+  }
+
+  // ---- Painel "Hoje" com abas ----
+  function getWeekStartEnd(weekOffset){
+    var now = new Date();
+    var dayOfWeek = now.getDay();
+    var daysToMonday = (dayOfWeek === 0) ? -6 : 1 - dayOfWeek;
+    var start = new Date(now);
+    start.setDate(start.getDate() + daysToMonday + (weekOffset * 7));
+    var end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    return { start: start, end: end };
+  }
+  function isoDateInRange(isoDate, startDate, endDate){
+    var d = parseIsoDate(isoDate);
+    return d >= startDate && d <= endDate;
+  }
+  function formatWeekRange(startDate, endDate){
+    var s = pad2(startDate.getDate()) + "/" + pad2(startDate.getMonth()+1);
+    var e = pad2(endDate.getDate()) + "/" + pad2(endDate.getMonth()+1);
+    return s + " a " + e;
+  }
+  function renderEntregasGrouped(entregas){
+    if(entregas.length === 0){
+      return '<span class="today-empty">Nenhuma entrega cadastrada.</span>';
+    }
+    var byCampaign = {};
+    entregas.forEach(function(e){
+      if(!byCampaign[e.campanhaId]) byCampaign[e.campanhaId] = [];
+      byCampaign[e.campanhaId].push(e);
+    });
+    var html = '';
+    Object.keys(byCampaign).forEach(function(campId){
+      var camp = campanhaById(campId);
+      var campName = camp ? camp.nome : "Campanha desconhecida";
+      var campColor = camp ? camp.cor : "#999";
+      var entregasDaCamp = byCampaign[campId];
+      html += '<details class="today-campaign-group">' +
+        '<summary style="background:' + campColor + '20;">' +
+          '<span class="today-campaign-dot" style="background:' + campColor + ';"></span>' +
+          '<span>' + escapeHtml(campName) + ' (' + entregasDaCamp.length + ')</span>' +
+        '</summary>' +
+        '<div class="today-campaign-list">' +
+        entregasDaCamp.map(function(e){
+          var status = statusInfo(e.status || "planejado");
+          return '<div class="today-entrega-item">' +
+            '<span class="today-entrega-titulo">' + escapeHtml(e.titulo) + '</span>' +
+            (e.tipoAcaoCategoria ? '<span class="today-entrega-tipo">' + escapeHtml(e.tipoAcaoCategoria) + '</span>' : '') +
+            '<span class="today-entrega-status" style="background:' + status.cor + '50; border: 1px solid ' + status.cor + ';">' +
+              '<span style="width:0.4rem;height:0.4rem;border-radius:50%;background:' + status.cor + ';"></span>' +
+              escapeHtml(status.label) +
+            '</span>' +
+            (e.responsaveis && e.responsaveis.length ? '<span class="today-entrega-responsavel">' + escapeHtml(e.responsaveis[0]) + '</span>' : '') +
+          '</div>';
+        }).join('') +
+        '</div>' +
+      '</details>';
+    });
+    return html;
+  }
+
+  function paintToday(){
+    var now = new Date();
+    var full = document.getElementById("todayFull");
+    if(full){
+      full.textContent = DIAS[now.getDay()] + ", " + now.getDate() + " de " + MESES[now.getMonth()] + " de " + now.getFullYear();
+    }
+    document.querySelectorAll(".day .daynum").forEach(function(sp){
+      sp.parentElement.classList.remove("today");
+    });
+    var months = document.querySelectorAll(".month");
+    months.forEach(function(sec){
+      var heading = sec.querySelector("h2").textContent;
+      MESES.forEach(function(nomeMes, idx){
+        var cap = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+        if(heading.indexOf(cap) === 0 && idx === now.getMonth() && heading.indexOf(String(now.getFullYear())) > -1){
+          sec.querySelectorAll(".day:not(.empty)").forEach(function(d){
+            var n = d.querySelector(".daynum");
+            if(n && parseInt(n.textContent,10) === now.getDate()){
+              d.classList.add("today");
+            }
+          });
+        }
+      });
+    });
+
+    var todayIso = now.getFullYear() + "-" + pad2(now.getMonth()+1) + "-" + pad2(now.getDate());
+    var listEl = document.getElementById("todayDeliveries");
+    if(listEl){
+      var todays = store.entregas.filter(function(e){ return e.data === todayIso; });
+      listEl.innerHTML = renderEntregasGrouped(todays);
+    }
+
+    // Atualizar abas
+    var weekThis = getWeekStartEnd(0);
+    var weekNext = getWeekStartEnd(1);
+
+    var weekFullEl = document.getElementById("weekFull");
+    if(weekFullEl){
+      weekFullEl.textContent = "Semana de " + formatWeekRange(weekThis.start, weekThis.end);
+    }
+    var weekListEl = document.getElementById("weekDeliveries");
+    if(weekListEl){
+      var weekEntregas = store.entregas.filter(function(e){ return isoDateInRange(e.data, weekThis.start, weekThis.end); });
+      weekListEl.innerHTML = renderEntregasGrouped(weekEntregas);
+    }
+
+    var nextweekFullEl = document.getElementById("nextweekFull");
+    if(nextweekFullEl){
+      nextweekFullEl.textContent = "Semana de " + formatWeekRange(weekNext.start, weekNext.end);
+    }
+    var nextweekListEl = document.getElementById("nextweekDeliveries");
+    if(nextweekListEl){
+      var nextweekEntregas = store.entregas.filter(function(e){ return isoDateInRange(e.data, weekNext.start, weekNext.end); });
+      nextweekListEl.innerHTML = renderEntregasGrouped(nextweekEntregas);
+    }
+  }
+
+  // Event listener para as abas
+  document.querySelectorAll(".today-tab-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var tab = btn.getAttribute("data-tab");
+      document.querySelectorAll(".today-tab-btn").forEach(function(b){ b.classList.remove("active"); });
+      document.querySelectorAll(".today-tab-content").forEach(function(c){ c.hidden = true; });
+      btn.classList.add("active");
+      document.querySelector('.today-tab-content[data-content="'+tab+'"]').hidden = false;
+    });
+  });
+
+  // ---- Filtros ----
+  var activeCat = "all";
+  var activeType = "all";
+
+  function applyFilters(){
+    document.querySelectorAll(".day:not(.empty)").forEach(function(day){
+      var chips = day.querySelectorAll("a.chip");
+      if(chips.length === 0){ day.classList.remove("filtered-out"); return; }
+      var matches = Array.prototype.some.call(chips, function(chip){
+        var catOk = activeCat === "all" || chip.getAttribute("data-cat") === activeCat;
+        var types = (chip.getAttribute("data-type") || "").split(" ");
+        var typeOk = activeType === "all" || types.indexOf(activeType) > -1;
+        return catOk && typeOk;
+      });
+      day.classList.toggle("filtered-out", !matches);
+    });
+  }
+
+  document.querySelector(".cat-filter").addEventListener("click", function(e){
+    var btn = e.target.closest && e.target.closest(".cat-btn");
+    if(!btn) return;
+    document.querySelectorAll(".cat-btn").forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    activeCat = btn.getAttribute("data-filter");
+    applyFilters();
+    if(activeCat !== "all"){ openCampanhaDrawer(activeCat); }
+  });
+  document.querySelector(".type-filter").addEventListener("click", function(e){
+    var btn = e.target.closest && e.target.closest(".type-btn");
+    if(!btn) return;
+    document.querySelectorAll(".type-btn").forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    activeType = btn.getAttribute("data-type-filter");
+    applyFilters();
+  });
+
+  // ---- Drawer de detalhe (clique nos pontinhos do calendário) ----
+  var overlay = document.getElementById("drawerOverlay");
+  var drawer = document.getElementById("drawer");
+  var drawerBody = document.getElementById("drawerBody");
+  var drawerTitle = document.getElementById("drawerTitle");
+
+  function showDrawer(title, bodyHtml){
+    drawerTitle.textContent = title;
+    drawerBody.innerHTML = bodyHtml;
+    overlay.classList.add("is-open");
+    drawer.classList.add("is-open");
+    drawer.setAttribute("aria-hidden","false");
+  }
+  function openDiaDrawer(ids){
+    var entregas = ids.map(function(id){ return store.entregas.filter(function(e){ return e.id === id; })[0]; }).filter(Boolean);
+    if(!entregas.length) return;
+
+    var d = parseIsoDate(entregas[0].data);
+    var tituloDrawer = d.getDate() + " de " + MESES[d.getMonth()] + " de " + d.getFullYear();
+
+    var html = entregas.map(function(entrega){
+      var campanha = campanhaById(entrega.campanhaId);
+      var bodyHtml = "";
+      bodyHtml += briefSection("Detalhes", [
+        ["Fase", escapeHtml(faseLabel(entrega.fase))],
+        ["Tipo de Ação", entrega.tipoAcaoCategoria ? (escapeHtml(entrega.tipoAcaoCategoria) + (entrega.tipoAcaoSubtipo ? " — "+escapeHtml(entrega.tipoAcaoSubtipo) : "")) : ""],
+        ["Responsável", entrega.responsaveis && entrega.responsaveis.length ? escapeHtml(entrega.responsaveis.join(", ")) : ""]
+      ]);
+      bodyHtml += '<div class="brief-section"><h4>Descrição</h4><p style="font-size:0.9rem;color:var(--text-dim);margin:0;white-space:pre-wrap;">'+
+        (entrega.descricao ? escapeHtml(entrega.descricao) : "Sem descrição cadastrada.")+'</p></div>';
+      bodyHtml += '<div class="status-field"><span class="status-label">Status</span>'+buildStatusControl(entrega)+'</div>';
+      bodyHtml += '<div class="form-actions" style="margin-top:1rem;">' +
+        '<button type="button" class="btn-secondary" data-excluir-entrega="'+entrega.id+'" style="color:#C62828;border-color:#C62828;">Excluir</button>' +
+        '<button type="button" class="btn-primary" data-editar-entrega="'+entrega.id+'">Editar</button>' +
+      '</div>';
+
+      return '<details class="detail">' +
+        '<summary>' +
+          '<span class="det-title">'+escapeHtml(entrega.titulo)+'</span>' +
+          (campanha ? '<span class="phase-tag">'+escapeHtml(campanha.nome)+'</span>' : '') +
+        '</summary>' +
+        '<div class="detail-body">'+bodyHtml+'</div>' +
+      '</details>';
+    }).join("");
+
+    showDrawer(tituloDrawer, html);
+    refreshStatusControls();
+  }
+  function closeDrawer(){
+    overlay.classList.remove("is-open");
+    drawer.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden","true");
+  }
+  document.addEventListener("click", function(e){
+    var chip = e.target.closest && e.target.closest("a.chip");
+    var day = e.target.closest && e.target.closest(".day.active");
+    if(day){
+      if(chip) e.preventDefault();
+      var ids = Array.prototype.map.call(day.querySelectorAll("a.chip"), function(c){
+        return (c.getAttribute("href")||"").replace("#","");
+      }).filter(Boolean);
+      if(ids.length) openDiaDrawer(ids);
+    }
+  });
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
+
+  document.addEventListener("click", function(e){
+    var editBtn = e.target.closest && e.target.closest("[data-editar-entrega]");
+    if(editBtn){
+      var entregaEdit = store.entregas.filter(function(x){ return x.id === editBtn.getAttribute("data-editar-entrega"); })[0];
+      if(entregaEdit){
+        closeDrawer();
+        openEntregaForm({
+          editId: entregaEdit.id,
+          campanhaId: entregaEdit.campanhaId,
+          fase: entregaEdit.fase,
+          tipoAcaoCategoria: entregaEdit.tipoAcaoCategoria,
+          tipoAcaoSubtipo: entregaEdit.tipoAcaoSubtipo,
+          responsaveis: entregaEdit.responsaveis,
+          descricao: entregaEdit.descricao,
+          data: entregaEdit.data,
+          titulo: entregaEdit.titulo
+        });
+      }
+      return;
+    }
+    var delBtn = e.target.closest && e.target.closest("[data-excluir-entrega]");
+    if(delBtn){
+      var idExcluir = delBtn.getAttribute("data-excluir-entrega");
+      var entregaExcluir = store.entregas.filter(function(x){ return x.id === idExcluir; })[0];
+      if(entregaExcluir){
+        confirmAcao("Excluir entrega",
+          'Tem certeza que quer excluir "'+escapeHtml(entregaExcluir.titulo)+'"?\n\nEssa ação não pode ser desfeita.',
+          function(){
+            excluirEntrega(idExcluir);
+            closeDrawer();
+          },
+          { labelCancelar:"Cancelar", labelConfirmar:"Excluir", danger:true }
+        );
+      }
+      return;
+    }
+  });
+
+  // ---- Menu genérico de múltipla escolha (ex.: campo Responsável) ----
+  var fieldMultiMenu = document.getElementById("fieldMultiMenu");
+  function closeFieldMultiMenu(){
+    fieldMultiMenu.classList.remove("is-open");
+    fieldMultiMenu.removeAttribute("data-for");
+    fieldMultiMenu.innerHTML = "";
+  }
+  function positionFloatingMenu(menu, rect){
+    var menuWidth = menu.offsetWidth || 220;
+    var left = Math.min(rect.left, window.innerWidth - menuWidth - 12);
+    menu.style.left = Math.max(12, left) + "px";
+    var spaceBelow = window.innerHeight - rect.bottom - 12;
+    var spaceAbove = rect.top - 12;
+    var menuHeight = menu.offsetHeight || 0;
+    if(menuHeight > spaceBelow && spaceAbove > spaceBelow){
+      menu.style.top = Math.max(12, rect.top - menuHeight - 6) + "px";
+    } else {
+      menu.style.top = (rect.bottom + 6) + "px";
+    }
+  }
+  function openFieldMultiMenu(btn, fieldKey, opcoes, selecionados, onChange){
+    var isOpenForThis = fieldMultiMenu.classList.contains("is-open") && fieldMultiMenu.getAttribute("data-for") === fieldKey;
+    closeFieldMultiMenu();
+    if(isOpenForThis) return;
+    fieldMultiMenu.innerHTML = opcoes.map(function(op){
+      var checked = selecionados.indexOf(op) > -1;
+      return '<label class="field-multi-item"><input type="checkbox" class="field-multi-checkbox" value="'+escapeAttr(op)+'"'+(checked ? ' checked' : '')+'>'+escapeHtml(op)+'</label>';
+    }).join("");
+    var rect = btn.getBoundingClientRect();
+    fieldMultiMenu.classList.add("is-open");
+    fieldMultiMenu.setAttribute("data-for", fieldKey);
+    positionFloatingMenu(fieldMultiMenu, rect);
+    fieldMultiMenu.querySelectorAll(".field-multi-checkbox").forEach(function(cb){
+      cb.addEventListener("change", function(){
+        var idx = selecionados.indexOf(cb.value);
+        if(cb.checked && idx === -1) selecionados.push(cb.value);
+        if(!cb.checked && idx > -1) selecionados.splice(idx, 1);
+        onChange();
+      });
+    });
+  }
+  document.addEventListener("click", function(e){
+    if(fieldMultiMenu.classList.contains("is-open") && !fieldMultiMenu.contains(e.target) && !e.target.closest(".field-select-btn")){
+      closeFieldMultiMenu();
+    }
+  });
+
+  // ---- Status da entrega (Planejado / Em desenvolvimento / Concluído / Cancelado) ----
+  var statusMenu = document.getElementById("statusMenu");
+  function refreshStatusControls(){
+    document.querySelectorAll(".status-badge").forEach(function(badge){
+      var id = badge.getAttribute("data-id");
+      var entrega = store.entregas.filter(function(x){ return x.id === id; })[0];
+      if(!entrega) return;
+      var current = statusInfo(entrega.status || "planejado");
+      badge.style.borderColor = current.cor;
+      badge.style.color = current.cor;
+      badge.innerHTML = '<span class="status-dot-sm" style="background:'+current.cor+';"></span>'+escapeHtml(current.label);
+    });
+  }
+  function closeStatusMenu(){
+    statusMenu.classList.remove("is-open");
+    statusMenu.innerHTML = "";
+  }
+  function openStatusMenu(badge){
+    var id = badge.getAttribute("data-id");
+    var entrega = store.entregas.filter(function(x){ return x.id === id; })[0];
+    if(!entrega) return;
+    var current = statusInfo(entrega.status || "planejado");
+    statusMenu.innerHTML = STATUS_OPCOES.map(function(s){
+      return '<button type="button" class="status-menu-item'+(s.value===current.value?' is-current':'')+'" data-id="'+id+'" data-status="'+s.value+'">' +
+        '<span class="status-dot-sm" style="background:'+s.cor+';"></span>'+escapeHtml(s.label) +
+      '</button>';
+    }).join("");
+    var rect = badge.getBoundingClientRect();
+    statusMenu.classList.add("is-open");
+    positionFloatingMenu(statusMenu, rect);
+  }
+  document.addEventListener("click", function(e){
+    var badge = e.target.closest && e.target.closest(".status-badge");
+    if(badge){
+      e.preventDefault();
+      var jaAberto = statusMenu.classList.contains("is-open") && statusMenu.getAttribute("data-open-for") === badge.getAttribute("data-id");
+      closeStatusMenu();
+      if(!jaAberto){
+        openStatusMenu(badge);
+        statusMenu.setAttribute("data-open-for", badge.getAttribute("data-id"));
+      }
+      return;
+    }
+    var item = e.target.closest && e.target.closest(".status-menu-item");
+    if(item){
+      e.preventDefault();
+      var id = item.getAttribute("data-id");
+      var statusVal = item.getAttribute("data-status");
+      var entrega = store.entregas.filter(function(x){ return x.id === id; })[0];
+      if(entrega){
+        entrega.status = statusVal;
+        saveStore();
+        refreshStatusControls();
+        supabaseClient.from("entregas").update({ payload: entrega, updated_at: new Date().toISOString() }).eq("id", entrega.id).then(function(res){
+          if(res.error){ alert("Erro ao salvar status: " + res.error.message); }
+        });
+      }
+      closeStatusMenu();
+      return;
+    }
+    if(!statusMenu.contains(e.target)) closeStatusMenu();
+  });
+
+  // ---- Carrossel de meses (2 visíveis por vez, 1 em telas estreitas) ----
+  var calViewport = document.querySelector(".cal-viewport");
+  var calTrack = document.getElementById("calTrack");
+  var calSlides = calTrack ? Array.prototype.slice.call(calTrack.querySelectorAll(".month")) : [];
+  var calDots = document.getElementById("calDots");
+  var calPrev = document.getElementById("calPrev");
+  var calNext = document.getElementById("calNext");
+  var calIndex = 0;
+  var calSlideWidth = 0;
+  var calGap = 0;
+
+  function calVisibleCount(){
+    return window.innerWidth < 700 ? 1 : 2;
+  }
+  function calMaxIndex(){
+    return Math.max(0, calSlides.length - calVisibleCount());
+  }
+  function buildCalDots(){
+    if(!calDots) return;
+    calDots.innerHTML = "";
+    var count = calMaxIndex() + 1;
+    for(var i = 0; i < count; i++){
+      (function(i){
+        var dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "cal-dot";
+        dot.setAttribute("aria-label", calSlides[i].querySelector("h2").textContent.trim());
+        dot.addEventListener("click", function(){ goToCalSlide(i); });
+        calDots.appendChild(dot);
+      })(i);
+    }
+  }
+  function updateCalCarousel(){
+    var offset = calIndex * (calSlideWidth + calGap);
+    calTrack.style.transform = "translateX(-" + offset + "px)";
+    if(calPrev) calPrev.disabled = calIndex === 0;
+    if(calNext) calNext.disabled = calIndex === calMaxIndex();
+    if(calDots){
+      Array.prototype.forEach.call(calDots.children, function(dot, i){
+        dot.classList.toggle("active", i === calIndex);
+      });
+    }
+  }
+  function goToCalSlide(i){
+    calIndex = Math.max(0, Math.min(calMaxIndex(), i));
+    updateCalCarousel();
+  }
+  function layoutCalCarousel(){
+    if(!calTrack || !calSlides.length || !calViewport) return;
+    var visibleCount = calVisibleCount();
+    var trackStyle = getComputedStyle(calTrack);
+    calGap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+    var viewportWidth = calViewport.clientWidth;
+    calSlideWidth = (viewportWidth - calGap * (visibleCount - 1)) / visibleCount;
+    calSlides.forEach(function(s){
+      s.style.flex = "0 0 " + calSlideWidth + "px";
+      s.style.maxWidth = calSlideWidth + "px";
+    });
+    if(calIndex > calMaxIndex()) calIndex = calMaxIndex();
+    buildCalDots();
+    updateCalCarousel();
+  }
+
+  if(calTrack && calSlides.length){
+    var monthNamesCap = MESES.map(function(m){ return m.charAt(0).toUpperCase() + m.slice(1); });
+    var nowForCal = new Date();
+    var autoIndex = calSlides.findIndex(function(slide){
+      var h = slide.querySelector("h2").textContent;
+      return h.indexOf(monthNamesCap[nowForCal.getMonth()]) === 0 && h.indexOf(String(nowForCal.getFullYear())) > -1;
+    });
+    if(autoIndex > -1) calIndex = autoIndex;
+
+    if(calPrev) calPrev.addEventListener("click", function(){ goToCalSlide(calIndex - 1); });
+    if(calNext) calNext.addEventListener("click", function(){ goToCalSlide(calIndex + 1); });
+
+    layoutCalCarousel();
+    var calResizeTimer;
+    window.addEventListener("resize", function(){
+      clearTimeout(calResizeTimer);
+      calResizeTimer = setTimeout(layoutCalCarousel, 150);
+    });
+  }
+
+  // ---- Cadastro de campanhas e entregas ----
+  var PALETA_CAMPANHAS = ["#6100BD","#B8860B","#1976D2","#E8590C","#C2185B","#00897B","#5D4037","#455A64"];
+  var STATUS_OPCOES = [
+    { value:"planejado", label:"Planejado", cor:"#6F5D93" },
+    { value:"em_desenvolvimento", label:"Em desenvolvimento", cor:"#1976D2" },
+    { value:"concluido", label:"Concluído", cor:"#6100BD" },
+    { value:"cancelado", label:"Cancelado", cor:"#C62828" }
+  ];
+  function statusInfo(value){
+    return STATUS_OPCOES.filter(function(s){ return s.value === value; })[0] || STATUS_OPCOES[0];
+  }
+  function buildStatusControl(entrega){
+    var current = statusInfo(entrega.status || "planejado");
+    return '<button type="button" class="status-badge" data-id="'+entrega.id+'" style="border-color:'+current.cor+';color:'+current.cor+';">' +
+      '<span class="status-dot-sm" style="background:'+current.cor+';"></span>'+escapeHtml(current.label) +
+    '</button>';
+  }
+  var RESPONSAVEIS_OPCOES = ["Thiago Gramulha","Aline Batista","Amanda Alkmim","Carolayne Rodrigues","Igor Freire","Jéssica Bandeira","Julia Daniel","Krislene Lisboa","Leticia Ronche","Lorena Ferreira","Rui Bomfim","Samantha Amaral","Vitor Ammari","Willian Pereira"];
+  var FASES_CAMPANHA = [
+    { value:"pre", label:"Pré-campanha" },
+    { value:"durante", label:"Durante" },
+    { value:"pos", label:"Pós-campanha" }
+  ];
+  var TIPOS_ACAO = [
+    { categoria:"Estratégia", fase:"pre", cadenciaDias:null,
+      subtipos:["Definição de ICP e personas","Definição de oferta","Definição de KPIs","Definição de contas-alvo (se tiver ABM)","Organização de CRM para cross-sell","Lista de contas-alvo","Definição de Queries","Definição de Palavras-Chaves"],
+      subtiposInstitucional:["Definição de ICP e personas","Definição de oferta","Definição de KPIs","Definição de Queries","Definição de Palavras-Chaves"]
+    },
+    { categoria:"Preparação Marketing", fase:"pre", cadenciaDias:null, subtipos:["Planejamento do calendário de ações","Criação do grupo de comunicação no chat","Apresentação GTM","Treinamento time de Marketing"] },
+    { categoria:"Preparação Comercial", fase:"pre", cadenciaDias:null, subtipos:["Treinamento do time comercial | Start Campanha"], apenasProduto:true },
+    { categoria:"Produção de Peças", fase:"pre", cadenciaDias:null, subtipos:["Landing page","Mídia paga (D0)","Vídeo (Manifesto)","Peças de Social (post D0)","E-mail de lançamento"] },
+    { categoria:"Configuração técnica", fase:"pre", cadenciaDias:null,
+      subtipos:["Configuração de tracking (UTMs)","Configuração de pixels de conversão","Integração formulário da LP → CRM","Configuração da campanha de mídia paga","Configuração de automação de e-mail/nutrição","QA final do fluxo completo"],
+      subtiposInstitucional:["Configuração de tracking (UTMs)","Configuração de pixels de conversão","Configuração da campanha de mídia paga","QA final do fluxo completo"]
+    },
+    { categoria:"PR", fase:"durante", cadenciaDias:45, subtipos:["PR I","PR II","PR III","Case + PR"], subtiposInstitucional:["PR I","PR II","PR III"] },
+    { categoria:"SEO", fase:"durante", cadenciaDias:null, subtipos:["Blogpost novo","Atualização de blog","Blog query fan-out","Artigo LinkedIn B.U (Diretor) (Autoridade)"], subtipoCadencia:{"Blogpost novo":30,"Atualização de blog":30} },
+    { categoria:"Materiais ricos", fase:"durante", cadenciaDias:90, subtipos:["Material rico novo","Atualização de material rico"], apenasProduto:true },
+    { categoria:"Vídeos", fase:"durante", cadenciaDias:null,
+      subtipos:["Vídeo de produto (Demonstração)","Vídeo de conteúdo (Q&A)"],
+      subtiposInstitucional:["Vídeo institucional (Manifesto)","Depoimento"]
+    },
+    { categoria:"Evento", fase:"durante", cadenciaDias:null, subtipos:["Evento online","Evento presencial","Evento com parceiro"] },
+    { categoria:"Nutrição / CRM", fase:"durante", cadenciaDias:null, subtipos:["Nutrição geral","Nutrição pós-evento","Nutrição de material rico"], apenasProduto:true },
+    { categoria:"Mídia paga", fase:"durante", cadenciaDias:null, subtipos:["Tráfego pago (awareness)","Tráfego pago (consideração)","Tráfego pago (conversão)","Campanha geolocalizada","Mídia OOH"] },
+    { categoria:"Social", fase:"durante", cadenciaDias:null, subtipos:["Social selling","Post no LinkedIn","Highlight de evento","Artigo LinkedIn | Evento"] },
+    { categoria:"Outros", fase:"durante", cadenciaDias:null, subtipos:["Case"], apenasProduto:true },
+    { categoria:"Comercial", fase:"durante", cadenciaDias:null, subtipos:["Prospecção pós-evento","Follow-up com contas-alvo"], apenasProduto:true },
+    { categoria:"Fechamento da Campanha", fase:"pos", cadenciaDias:null, subtipos:["Consolidar todos os KPIs","Comparar com metas"] },
+    { categoria:"Análise", fase:"pos", cadenciaDias:null, subtipos:["O que mais gerou resultado?","Qual canal performou melhor?","Onde perdemos conversão?","Qual foi o gargalo (topo, meio ou fundo)?"] },
+    { categoria:"Registro de aprendizados", fase:"pos", cadenciaDias:null, subtipos:["O que funcionou","O que não funcionou","Hipóteses validadas","Erros cometidos","Surpresas (positivas ou negativas)"] },
+    { categoria:"Fechamento Marketing", fase:"pos", cadenciaDias:null, subtipos:["APS Fechamento","Reunião com Marketing"] }
+  ];
+  function faseLabel(fase){
+    var f = FASES_CAMPANHA.filter(function(x){ return x.value === (fase || "durante"); })[0];
+    return f ? f.label : "";
+  }
+  function categoriasParaTipo(tipo, fase){
+    fase = fase || "durante";
+    return TIPOS_ACAO.filter(function(c){ return c.fase === fase && !(c.apenasProduto && tipo === "institucional"); });
+  }
+  function subtiposParaCategoria(categoria, tipo){
+    var cat = TIPOS_ACAO.filter(function(c){ return c.categoria === categoria; })[0];
+    if(!cat) return [];
+    if(tipo === "institucional" && cat.subtiposInstitucional) return cat.subtiposInstitucional;
+    return cat.subtipos;
+  }
+  function getCadenciaDias(categoria, subtipo){
+    var cat = TIPOS_ACAO.filter(function(c){ return c.categoria === categoria; })[0];
+    if(!cat) return null;
+    if(subtipo && cat.subtipoCadencia && cat.subtipoCadencia[subtipo]) return cat.subtipoCadencia[subtipo];
+    return cat.cadenciaDias || null;
+  }
+  function confirmAcao(titulo, mensagemHtml, onConfirm, opts){
+    opts = opts || {};
+    var labelCancelar = opts.labelCancelar || "Cancelar";
+    var labelConfirmar = opts.labelConfirmar || "Confirmar";
+    var estiloDanger = opts.danger ? ' style="background:#C62828;border-color:#C62828;"' : '';
+    openModal(titulo,
+      '<p style="font-size:0.9rem;color:var(--text-dim);margin:0 0 1.2rem;white-space:pre-line;">'+mensagemHtml+'</p>' +
+      '<div class="form-actions">' +
+        '<button type="button" class="btn-secondary" id="fConfirmNao">'+escapeHtml(labelCancelar)+'</button>' +
+        '<button type="button" class="btn-primary" id="fConfirmSim"'+estiloDanger+'>'+escapeHtml(labelConfirmar)+'</button>' +
+      '</div>'
+    );
+    document.getElementById("fConfirmNao").addEventListener("click", closeModal);
+    document.getElementById("fConfirmSim").addEventListener("click", function(){
+      closeModal();
+      onConfirm();
+    });
+  }
+  function sugerirProximaCadencia(entrega, campanhaSel){
+    var cadenciaDias = entrega.tipoAcaoCategoria ? getCadenciaDias(entrega.tipoAcaoCategoria, entrega.tipoAcaoSubtipo) : null;
+    if(!cadenciaDias) return;
+
+    var proxima = parseIsoDate(entrega.data);
+    proxima.setDate(proxima.getDate() + cadenciaDias);
+    if(campanhaSel && campanhaSel.periodoFim){
+      var fim = parseIsoDate(campanhaSel.periodoFim);
+      if(proxima > fim) return;
+    }
+
+    var proximaIso = proxima.getFullYear() + "-" + pad2(proxima.getMonth()+1) + "-" + pad2(proxima.getDate());
+    var rotulo = entrega.tipoAcaoSubtipo || entrega.tipoAcaoCategoria;
+    var mensagem = 'Esse tipo de ação ("' + escapeHtml(rotulo) + '") tem cadência sugerida de ' + cadenciaDias + ' dias.\n\nQuer cadastrar a próxima entrega desse tipo em ' + formatDateBR(proximaIso) + '?';
+
+    confirmAcao("Cadência sugerida", mensagem, function(){
+      openEntregaForm({
+        campanhaId: entrega.campanhaId,
+        fase: entrega.fase,
+        tipoAcaoCategoria: entrega.tipoAcaoCategoria,
+        tipoAcaoSubtipo: entrega.tipoAcaoSubtipo,
+        responsaveis: entrega.responsaveis,
+        descricao: entrega.descricao,
+        data: proximaIso,
+        titulo: ""
+      });
+    }, { labelCancelar:"Não, obrigado", labelConfirmar:"Sim, cadastrar" });
+  }
+  function getCheckedValue(name){
+    var el = document.querySelector('input[name="'+name+'"]:checked');
+    return el ? el.value : "";
+  }
+
+  function buildChoiceGrid(name, options, selected){
+    selected = selected || [];
+    return '<div class="choice-grid">' + options.map(function(opt){
+      var checked = selected.indexOf(opt) > -1;
+      return '<label class="choice-pill'+(checked ? ' is-checked' : '')+'">' +
+        '<input type="checkbox" name="'+name+'" value="'+escapeAttr(opt)+'"'+(checked ? ' checked' : '')+'>' +
+        escapeHtml(opt) +
+      '</label>';
+    }).join('') + '</div>';
+  }
+  function getCheckedValues(name){
+    return Array.prototype.map.call(document.querySelectorAll('input[name="'+name+'"]:checked'), function(cb){ return cb.value; });
+  }
+  function wireChoiceGrids(container){
+    container.querySelectorAll(".choice-pill input").forEach(function(cb){
+      cb.addEventListener("change", function(){
+        if(cb.type === "radio"){
+          container.querySelectorAll('input[name="'+cb.name+'"]').forEach(function(sib){
+            sib.closest(".choice-pill").classList.toggle("is-checked", sib.checked);
+          });
+        } else {
+          cb.closest(".choice-pill").classList.toggle("is-checked", cb.checked);
+        }
+      });
+    });
+  }
+
+  function slugify(str){
+    var noAccents = String(str).normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    return noAccents
+      .toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || "campanha";
+  }
+  function uid(prefix){
+    return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  }
+  function parseIsoDate(iso){
+    var parts = iso.split("-");
+    return new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+  }
+  function campanhaById(id){
+    return store.campanhas.filter(function(c){ return c.id === id; })[0];
+  }
+  function findDayCell(monthIdx, year, dayNum){
+    var monthCap = MESES[monthIdx].charAt(0).toUpperCase() + MESES[monthIdx].slice(1);
+    var found = null;
+    document.querySelectorAll(".month").forEach(function(sec){
+      if(found) return;
+      var heading = sec.querySelector("h2").textContent;
+      if(heading.indexOf(monthCap) === 0 && heading.indexOf(String(year)) > -1){
+        sec.querySelectorAll(".day:not(.empty)").forEach(function(d){
+          var n = d.querySelector(".daynum");
+          if(n && parseInt(n.textContent,10) === dayNum){ found = d; }
+        });
+      }
+    });
+    return found;
+  }
+
+  function ensureCatButton(campanha){
+    var btn = document.querySelector('.cat-btn[data-filter="'+campanha.id+'"]');
+    if(!btn){
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cat-btn";
+      btn.setAttribute("data-filter", campanha.id);
+      document.querySelector(".cat-filter").appendChild(btn);
+    }
+    btn.style.setProperty("--dot-color", campanha.cor);
+    btn.textContent = campanha.nome;
+  }
+  function fieldVal(id){
+    var el = document.getElementById(id);
+    return el ? el.value : "";
+  }
+  function pickAutoColor(){
+    var usadas = store.campanhas.map(function(c){ return c.cor; });
+    var livre = PALETA_CAMPANHAS.filter(function(cor){ return usadas.indexOf(cor) === -1; })[0];
+    return livre || PALETA_CAMPANHAS[store.campanhas.length % PALETA_CAMPANHAS.length];
+  }
+  function formatDateBR(iso){
+    if(!iso) return "";
+    var d = parseIsoDate(iso);
+    return pad2(d.getDate()) + "/" + pad2(d.getMonth()+1) + "/" + d.getFullYear();
+  }
+  function formatPeriodo(ini, fim){
+    if(!ini && !fim) return "";
+    return formatDateBR(ini) + (fim ? " até " + formatDateBR(fim) : "");
+  }
+  function formatCurrency(n){
+    var num = parseFloat(n);
+    if(isNaN(num)) return "";
+    return "R$ " + num.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function currencyDisplayFromRaw(raw){
+    if(raw === undefined || raw === null || raw === "") return "";
+    return formatCurrency(raw);
+  }
+  function attachCurrencyMask(input){
+    if(!input) return;
+    input.addEventListener("input", function(){
+      var digits = input.value.replace(/\D/g, "");
+      input.value = digits ? formatCurrency(parseInt(digits, 10) / 100) : "";
+    });
+  }
+  function parseCurrencyValue(id){
+    var el = document.getElementById(id);
+    if(!el) return "";
+    var digits = el.value.replace(/\D/g, "");
+    return digits ? (parseInt(digits, 10) / 100).toFixed(2) : "";
+  }
+  function linkHtml(url){
+    if(!url) return "";
+    var safeLabel = escapeHtml(url);
+    var href = /^https?:\/\//i.test(url) ? url : ("https://" + url);
+    return '<a href="'+escapeAttr(href)+'" target="_blank" rel="noopener noreferrer">'+safeLabel+'</a>';
+  }
+  function briefSection(title, fields){
+    var rows = fields.map(function(f){
+      var val = f[1];
+      if(val === undefined || val === null || val === "") return "";
+      return '<div class="brief-field"><span class="k">'+escapeHtml(f[0])+'</span><span class="v">'+val+'</span></div>';
+    }).filter(Boolean).join("");
+    if(!rows) return "";
+    return '<div class="brief-section"><h4>'+escapeHtml(title)+'</h4>'+rows+'</div>';
+  }
+  function ensureTypeButton(tipoSlug, label){
+    if(!tipoSlug) return;
+    if(document.querySelector('.type-btn[data-type-filter="'+tipoSlug+'"]')) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "type-btn";
+    btn.setAttribute("data-type-filter", tipoSlug);
+    btn.textContent = label;
+    document.querySelector(".type-filter").appendChild(btn);
+  }
+  function ensureChip(entrega){
+    if(document.querySelector('a.chip[href="#'+entrega.id+'"]')) return;
+    var d = parseIsoDate(entrega.data);
+    var cell = findDayCell(d.getMonth(), d.getFullYear(), d.getDate());
+    if(!cell) return;
+    cell.classList.add("active");
+    var chip = document.createElement("a");
+    chip.className = "chip";
+    chip.href = "#" + entrega.id;
+    chip.setAttribute("data-cat", entrega.campanhaId);
+    chip.setAttribute("data-type", entrega.tipos.join(" "));
+    var camp = campanhaById(entrega.campanhaId);
+    chip.style.background = camp ? camp.cor : "";
+    chip.textContent = entrega.titulo;
+    cell.appendChild(chip);
+  }
+  function removeChip(id){
+    var chip = document.querySelector('a.chip[href="#'+id+'"]');
+    if(!chip) return;
+    var cell = chip.closest(".day");
+    chip.remove();
+    if(cell && !cell.querySelector("a.chip")){
+      cell.classList.remove("active");
+    }
+  }
+  function excluirEntrega(id){
+    store.entregas = store.entregas.filter(function(e){ return e.id !== id; });
+    saveStore();
+    removeChip(id);
+    refreshStatusControls();
+    applyFilters();
+    paintToday();
+    supabaseClient.from("entregas").delete().eq("id", id).then(function(res){
+      if(res.error){ alert("Erro ao excluir entrega: " + res.error.message); }
+    });
+  }
+  function excluirCampanha(id){
+    store.entregas.filter(function(e){ return e.campanhaId === id; }).forEach(function(e){ removeChip(e.id); });
+    store.entregas = store.entregas.filter(function(e){ return e.campanhaId !== id; });
+    store.campanhas = store.campanhas.filter(function(c){ return c.id !== id; });
+    saveStore();
+
+    var catBtn = document.querySelector('.cat-btn[data-filter="'+id+'"]');
+    if(catBtn) catBtn.remove();
+
+    refreshStatusControls();
+    applyFilters();
+    paintToday();
+    supabaseClient.from("campanhas").delete().eq("id", id).then(function(res){
+      if(res.error){ alert("Erro ao excluir campanha: " + res.error.message); }
+    });
+  }
+  // -- Modal genérico --
+  var modalOverlay = document.getElementById("modalOverlay");
+  var modalEl = document.getElementById("modal");
+  var modalTitleEl = document.getElementById("modalTitle");
+  var modalBodyEl = document.getElementById("modalBody");
+
+  function openModal(title, bodyHtml){
+    modalTitleEl.textContent = title;
+    modalBodyEl.innerHTML = bodyHtml;
+    modalOverlay.classList.add("is-open");
+    modalEl.classList.add("is-open");
+    modalEl.setAttribute("aria-hidden","false");
+  }
+  function closeModal(){
+    modalOverlay.classList.remove("is-open");
+    modalEl.classList.remove("is-open");
+    modalEl.setAttribute("aria-hidden","true");
+    modalBodyEl.innerHTML = "";
+    closeFieldMultiMenu();
+  }
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", closeModal);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+
+  function openCampanhaTipoModal(){
+    openModal("Nova campanha",
+      '<p class="form-hint" style="margin:0 0 0.5rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Campanhas Cadastradas</p>' +
+      '<p class="form-hint" style="margin:0 0 1rem;">Selecione o tipo de campanha para abrir os campos certos.</p>' +
+      '<div class="tipo-cards">' +
+        '<button type="button" class="tipo-card" data-tipo="produto">' +
+          '<strong>Campanha de Produto</strong>' +
+        '</button>' +
+        '<button type="button" class="tipo-card" data-tipo="institucional">' +
+          '<strong>Campanha Institucional</strong>' +
+        '</button>' +
+      '</div>'
+    );
+    document.querySelectorAll(".tipo-card").forEach(function(card){
+      card.addEventListener("click", function(){
+        openCampanhaModal(null, card.getAttribute("data-tipo"));
+      });
+    });
+  }
+
+  function openCampanhaModal(editId, tipoForNew){
+    var editing = editId ? campanhaById(editId) : null;
+    var c = editing || {};
+    var tipo = editing ? editing.tipo : tipoForNew;
+    var tipoLabel = tipo === "institucional" ? "Campanha Institucional" : "Campanha de Produto";
+    var duracaoOptions = ["", "60", "90", "120"].map(function(v){
+      var label = v === "" ? "Selecione" : v + " dias";
+      var sel = (c.duracao || "") === v ? " selected" : "";
+      return '<option value="'+v+'"'+sel+'>'+label+'</option>';
+    }).join("");
+
+    openModal((editing ? "Editar " : "Nova ") + tipoLabel,
+      '<details class="form-section" open>' +
+        '<summary>Identificação</summary>' +
+        '<div class="form-section-body">' +
+          '<div class="form-field"><label for="fCampNome">Nome da campanha <span style="color:#C62828;">*</span></label>' +
+            '<input type="text" id="fCampNome" placeholder="'+(tipo === "institucional" ? "Ex.: Marca Forte 2026" : "Ex.: Lançamento Produto X")+'" value="'+escapeAttr(c.nome)+'"></div>' +
+          (tipo === "produto" ?
+            '<div class="form-field"><label for="fCampProduto">Produto/Solução <span style="color:#C62828;">*</span></label>' +
+              '<input type="text" id="fCampProduto" value="'+escapeAttr(c.produto)+'"></div>'
+          : '') +
+          (editing ?
+            '<div class="form-field"><label for="fCampCor">Cor de identificação</label>' +
+              '<input type="color" id="fCampCor" value="'+escapeAttr(c.cor)+'">' +
+              '<div class="form-hint">Atribuída automaticamente ao criar a campanha. Ajuste aqui se quiser.</div>' +
+            '</div>'
+          : '') +
+        '</div>' +
+      '</details>' +
+
+      '<details class="form-section" open>' +
+        '<summary>Cronograma</summary>' +
+        '<div class="form-section-body">' +
+          '<div class="form-field"><label for="fCampDuracao">Duração <span style="color:#C62828;">*</span></label>' +
+            '<select id="fCampDuracao">'+duracaoOptions+'</select></div>' +
+          '<div class="two-col">' +
+            '<div class="form-field"><label for="fCampPeriodoIni">Período (início) <span style="color:#C62828;">*</span></label>' +
+              '<input type="date" id="fCampPeriodoIni" value="'+escapeAttr(c.periodoInicio)+'"></div>' +
+            '<div class="form-field"><label for="fCampPeriodoFim">Período (fim)</label>' +
+              '<input type="date" id="fCampPeriodoFim" value="'+escapeAttr(c.periodoFim)+'"></div>' +
+          '</div>' +
+          '<div class="form-field"><label for="fCampRetro">Retrospectiva | Final da Campanha</label>' +
+            '<input type="date" id="fCampRetro" value="'+escapeAttr(c.retrospectiva)+'"></div>' +
+        '</div>' +
+      '</details>' +
+
+      '<details class="form-section" open>' +
+        '<summary>Direcionamento</summary>' +
+        '<div class="form-section-body">' +
+          '<div class="form-field"><label for="fCampObjetivo">Objetivo <span style="color:#C62828;">*</span></label>' +
+            '<textarea id="fCampObjetivo">'+escapeHtml(c.objetivo||"")+'</textarea></div>' +
+          '<div class="form-field"><label for="fCampKeyMessage">Key Message</label>' +
+            '<textarea id="fCampKeyMessage">'+escapeHtml(c.keyMessage||"")+'</textarea></div>' +
+          '<div class="two-col">' +
+            '<div class="form-field"><label for="fCampPortaVoz">Porta-voz</label>' +
+              '<input type="text" id="fCampPortaVoz" value="'+escapeAttr(c.portaVoz)+'"></div>' +
+            (tipo === "produto" ?
+              '<div class="form-field"><label for="fCampEspecialista">Especialista <span style="color:#C62828;">*</span></label>' +
+                '<input type="text" id="fCampEspecialista" value="'+escapeAttr(c.especialista)+'"></div>'
+            : '') +
+          '</div>' +
+        '</div>' +
+      '</details>' +
+
+      '<details class="form-section">' +
+        '<summary>Materiais &amp; Budget</summary>' +
+        '<div class="form-section-body">' +
+          '<div class="form-field"><label for="fCampBudget">Budget da Campanha (R$)</label>' +
+            '<input type="text" inputmode="numeric" id="fCampBudget" placeholder="R$ 0,00" value="'+escapeAttr(currencyDisplayFromRaw(c.budget))+'"></div>' +
+          '<div class="form-field"><label for="fCampCta">Link de CTA Principal</label>' +
+            '<input type="text" id="fCampCta" placeholder="https://..." value="'+escapeAttr(c.ctaLink)+'"></div>' +
+          '<div class="form-field"><label for="fCampMateriais">Materiais de apoio (link)</label>' +
+            '<input type="text" id="fCampMateriais" placeholder="https://..." value="'+escapeAttr(c.materiaisLink)+'"></div>' +
+        '</div>' +
+      '</details>' +
+
+      (tipo === "produto" ?
+        '<details class="form-section" open>' +
+          '<summary>Comercial</summary>' +
+          '<div class="form-section-body">' +
+            '<div class="form-field"><label for="fCampGtm">GTM / Apresentação (link)</label>' +
+              '<input type="text" id="fCampGtm" placeholder="https://..." value="'+escapeAttr(c.gtmLink)+'"></div>' +
+            '<div class="form-field"><label for="fCampIcp">ICP</label>' +
+              '<textarea id="fCampIcp">'+escapeHtml(c.icp||"")+'</textarea></div>' +
+            '<div class="two-col">' +
+              '<div class="form-field"><label for="fCampTicket">Ticket Médio (R$)</label>' +
+                '<input type="text" inputmode="numeric" id="fCampTicket" placeholder="R$ 0,00" value="'+escapeAttr(currencyDisplayFromRaw(c.ticketMedio))+'"></div>' +
+              '<div class="form-field"><label for="fCampMetaLeads">Meta de Leads</label>' +
+                '<input type="number" step="1" id="fCampMetaLeads" value="'+escapeAttr(c.metaLeads)+'"></div>' +
+            '</div>' +
+            '<div class="form-field"><label for="fCampContas">Contas alvo (link)</label>' +
+              '<input type="text" id="fCampContas" placeholder="https://..." value="'+escapeAttr(c.contasAlvoLink)+'"></div>' +
+          '</div>' +
+        '</details>'
+      : '') +
+
+      '<div class="form-actions">' +
+        '<button type="button" class="btn-secondary" id="fCampCancel">Cancelar</button>' +
+        '<button type="button" class="btn-primary" id="fCampSalvar">'+(editing ? "Salvar alterações" : "Salvar campanha")+'</button>' +
+      '</div>'
+    );
+    document.getElementById("fCampCancel").addEventListener("click", closeModal);
+    attachCurrencyMask(document.getElementById("fCampBudget"));
+    attachCurrencyMask(document.getElementById("fCampTicket"));
+
+    // Auto-preenche Período (fim) = Período (início) + Duração
+    var duracaoSel = document.getElementById("fCampDuracao");
+    var iniInput = document.getElementById("fCampPeriodoIni");
+    var fimInput = document.getElementById("fCampPeriodoFim");
+    var retroInput = document.getElementById("fCampRetro");
+    function autoFillFim(){
+      var dur = parseInt(duracaoSel.value, 10);
+      if(!dur || !iniInput.value) return;
+      var fim = parseIsoDate(iniInput.value);
+      fim.setDate(fim.getDate() + dur);
+      fimInput.value = fim.getFullYear() + "-" + pad2(fim.getMonth()+1) + "-" + pad2(fim.getDate());
+      autoFillRetro();
+    }
+    // Auto-preenche Retrospectiva = Período (fim) + 15 dias, ajustando pra cair em dia útil
+    function autoFillRetro(){
+      if(!fimInput.value) return;
+      var d = parseIsoDate(fimInput.value);
+      d.setDate(d.getDate() + 15);
+      var dow = d.getDay();
+      if(dow === 6) d.setDate(d.getDate() + 2);
+      else if(dow === 0) d.setDate(d.getDate() + 1);
+      retroInput.value = d.getFullYear() + "-" + pad2(d.getMonth()+1) + "-" + pad2(d.getDate());
+    }
+    duracaoSel.addEventListener("change", autoFillFim);
+    iniInput.addEventListener("change", autoFillFim);
+    fimInput.addEventListener("change", autoFillRetro);
+
+    function focarObrigatorio(input){
+      var details = input.closest("details.form-section");
+      if(details) details.open = true;
+      input.focus();
+    }
+
+    document.getElementById("fCampSalvar").addEventListener("click", function(){
+      var nomeInput = document.getElementById("fCampNome");
+      var nome = nomeInput.value.trim();
+      if(!nome){ focarObrigatorio(nomeInput); return; }
+
+      if(tipo === "produto"){
+        var produtoInput = document.getElementById("fCampProduto");
+        if(!produtoInput.value.trim()){ focarObrigatorio(produtoInput); return; }
+      }
+
+      var duracaoInput = document.getElementById("fCampDuracao");
+      if(!duracaoInput.value){ focarObrigatorio(duracaoInput); return; }
+
+      var periodoIniInput = document.getElementById("fCampPeriodoIni");
+      if(!periodoIniInput.value){ focarObrigatorio(periodoIniInput); return; }
+
+      var objetivoInput = document.getElementById("fCampObjetivo");
+      if(!objetivoInput.value.trim()){ focarObrigatorio(objetivoInput); return; }
+
+      if(tipo === "produto"){
+        var especialistaInput = document.getElementById("fCampEspecialista");
+        if(!especialistaInput.value.trim()){ focarObrigatorio(especialistaInput); return; }
+      }
+
+      var corInput = document.getElementById("fCampCor");
+      var cor = corInput ? corInput.value : (editing ? editing.cor : pickAutoColor());
+
+      var dados = {
+        nome: nome,
+        cor: cor,
+        duracao: fieldVal("fCampDuracao"),
+        periodoInicio: fieldVal("fCampPeriodoIni"),
+        periodoFim: fieldVal("fCampPeriodoFim"),
+        retrospectiva: fieldVal("fCampRetro"),
+        objetivo: fieldVal("fCampObjetivo").trim(),
+        keyMessage: fieldVal("fCampKeyMessage").trim(),
+        portaVoz: fieldVal("fCampPortaVoz").trim(),
+        budget: parseCurrencyValue("fCampBudget"),
+        ctaLink: fieldVal("fCampCta").trim(),
+        materiaisLink: fieldVal("fCampMateriais").trim(),
+        produto: fieldVal("fCampProduto").trim(),
+        especialista: fieldVal("fCampEspecialista").trim(),
+        gtmLink: fieldVal("fCampGtm").trim(),
+        icp: fieldVal("fCampIcp").trim(),
+        ticketMedio: parseCurrencyValue("fCampTicket"),
+        metaLeads: fieldVal("fCampMetaLeads"),
+        contasAlvoLink: fieldVal("fCampContas").trim()
+      };
+      if(!editing){ dados.tipo = tipo; }
+
+      if(editing){
+        Object.keys(dados).forEach(function(k){ editing[k] = dados[k]; });
+        saveStore();
+        ensureCatButton(editing);
+        document.querySelectorAll('a.chip[data-cat="'+editing.id+'"]').forEach(function(chip){
+          chip.style.background = editing.cor;
+        });
+        refreshStatusControls();
+        supabaseClient.from("campanhas").update({ payload: editing, updated_at: new Date().toISOString() }).eq("id", editing.id).then(function(res){
+          if(res.error){ alert("Erro ao salvar campanha: " + res.error.message); }
+        });
+      } else {
+        var baseId = slugify(nome);
+        var id = baseId, n = 2;
+        while(campanhaById(id)){ id = baseId + "-" + n; n++; }
+        var campanha = Object.assign({ id: id }, dados);
+        store.campanhas.push(campanha);
+        saveStore();
+        ensureCatButton(campanha);
+        supabaseClient.from("campanhas").insert({ id: campanha.id, payload: campanha }).then(function(res){
+          if(res.error){ alert("Erro ao criar campanha: " + res.error.message); }
+        });
+      }
+      closeModal();
+    });
+  }
+
+  function openCampanhaDrawer(id){
+    var c = campanhaById(id);
+    if(!c) return;
+    var tipoLabel = c.tipo === "institucional" ? "Campanha Institucional" : "Campanha de Produto";
+    var html = '<div class="tipo-badge tipo-badge-'+(c.tipo||"produto")+'">'+tipoLabel+'</div>';
+    if(c.tipo === "produto"){
+      html += briefSection("Identificação", [
+        ["Produto/Solução", c.produto ? escapeHtml(c.produto) : ""]
+      ]);
+    }
+    html += briefSection("Cronograma", [
+      ["Duração", c.duracao ? escapeHtml(c.duracao + " dias") : ""],
+      ["Período", formatPeriodo(c.periodoInicio, c.periodoFim)],
+      ["Retrospectiva | Final da Campanha", c.retrospectiva ? formatDateBR(c.retrospectiva) : ""]
+    ]);
+    html += briefSection("Direcionamento", [
+      ["Objetivo", c.objetivo ? escapeHtml(c.objetivo) : ""],
+      ["Key Message", c.keyMessage ? escapeHtml(c.keyMessage) : ""],
+      ["Porta-voz", c.portaVoz ? escapeHtml(c.portaVoz) : ""]
+    ]);
+    html += briefSection("Materiais & Budget", [
+      ["Budget da Campanha", c.budget ? formatCurrency(c.budget) : ""],
+      ["CTA Principal", linkHtml(c.ctaLink)],
+      ["Materiais de apoio", linkHtml(c.materiaisLink)]
+    ]);
+    if(c.tipo === "produto"){
+      html += briefSection("Comercial", [
+        ["Especialista", c.especialista ? escapeHtml(c.especialista) : ""],
+        ["GTM / Apresentação", linkHtml(c.gtmLink)],
+        ["ICP", c.icp ? escapeHtml(c.icp) : ""],
+        ["Ticket Médio", c.ticketMedio ? formatCurrency(c.ticketMedio) : ""],
+        ["Meta de Leads", c.metaLeads ? String(c.metaLeads) : ""],
+        ["Contas alvo", linkHtml(c.contasAlvoLink)]
+      ]);
+    }
+    html += '<div class="form-actions">' +
+      '<button type="button" class="btn-secondary" id="drawerExcluirCampanha" style="color:#C62828;border-color:#C62828;">Excluir campanha</button>' +
+      '<button type="button" class="btn-primary" id="drawerEditCampanha">Editar campanha</button>' +
+    '</div>';
+    showDrawer(c.nome, html);
+    var editBtn = document.getElementById("drawerEditCampanha");
+    if(editBtn){
+      editBtn.addEventListener("click", function(){
+        closeDrawer();
+        openCampanhaModal(c.id);
+      });
+    }
+    var delBtn = document.getElementById("drawerExcluirCampanha");
+    if(delBtn){
+      delBtn.addEventListener("click", function(){
+        var qtdEntregas = store.entregas.filter(function(e){ return e.campanhaId === c.id; }).length;
+        var msg = 'Tem certeza que quer excluir a campanha "'+escapeHtml(c.nome)+'"?' +
+          (qtdEntregas > 0 ? '\n\nTodas as '+qtdEntregas+' entregas associadas também serão excluídas.' : '') +
+          '\n\nEssa ação não pode ser desfeita.';
+        confirmAcao("Excluir campanha", msg, function(){
+          excluirCampanha(c.id);
+          closeDrawer();
+        }, { labelCancelar:"Cancelar", labelConfirmar:"Excluir", danger:true });
+      });
+    }
+  }
+
+  function openEntregaModal(){
+    if(store.campanhas.length === 0){
+      openModal("Nova entrega",
+        '<p style="font-size:0.9rem;color:var(--text-dim);margin:0 0 1rem;">Cadastre uma campanha antes de adicionar uma entrega.</p>' +
+        '<div class="form-actions">' +
+          '<button type="button" class="btn-secondary" id="fEntCancel">Cancelar</button>' +
+          '<button type="button" class="btn-primary" id="fEntIrCampanha">Cadastrar campanha</button>' +
+        '</div>'
+      );
+      document.getElementById("fEntCancel").addEventListener("click", closeModal);
+      document.getElementById("fEntIrCampanha").addEventListener("click", function(){ openCampanhaTipoModal(); });
+      return;
+    }
+    openEntregaForm();
+  }
+
+  function openEntregaForm(prefill){
+    var options = store.campanhas.map(function(c){
+      return '<option value="'+c.id+'" data-tipo="'+escapeAttr(c.tipo)+'">'+escapeHtml(c.nome)+'</option>';
+    }).join("");
+    openModal(prefill && prefill.editId ? "Editar entrega" : "Nova entrega",
+      '<div class="form-field">' +
+        '<label for="fEntCampanha">Campanha</label>' +
+        '<select id="fEntCampanha">'+options+'</select>' +
+      '</div>' +
+      '<div class="form-field">' +
+        '<label for="fEntTitulo">Título</label>' +
+        '<input type="text" id="fEntTitulo" placeholder="Ex.: Post de lançamento">' +
+      '</div>' +
+      '<div class="form-field">' +
+        '<label>Fase da campanha</label>' +
+        '<div class="choice-grid">' + FASES_CAMPANHA.map(function(f){
+          return '<label class="choice-pill">' +
+            '<input type="radio" name="entFase" value="'+f.value+'">' +
+            escapeHtml(f.label) +
+          '</label>';
+        }).join('') + '</div>' +
+      '</div>' +
+      '<div id="fEntCamposFase" hidden>' +
+        '<div class="entrega-tipo-box">' +
+          '<div class="form-field">' +
+            '<label for="fEntTipoAcaoCategoria">Entrega</label>' +
+            '<select id="fEntTipoAcaoCategoria"></select>' +
+          '</div>' +
+          '<div class="form-field" id="fEntTipoAcaoSubtipoWrap" hidden>' +
+            '<label>Selecione</label>' +
+            '<div class="choice-grid" id="fEntTipoAcaoSubtipos"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label>Responsável</label>' +
+          '<button type="button" class="field-select-btn" id="fEntResponsavelBtn">' +
+            '<span class="field-select-value placeholder" id="fEntResponsavelValue">Selecione...</span>' +
+          '</button>' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label for="fEntDescricao">Descrição</label>' +
+          '<textarea id="fEntDescricao" placeholder="Copy, briefing ou observações"></textarea>' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label for="fEntData">Data de Entrega</label>' +
+          '<input type="date" id="fEntData">' +
+        '</div>' +
+      '</div>' +
+      '<div class="form-actions">' +
+        '<button type="button" class="btn-secondary" id="fEntCancel">Cancelar</button>' +
+        '<button type="button" class="btn-primary" id="fEntSalvar">'+(prefill && prefill.editId ? "Salvar alterações" : "Salvar entrega")+'</button>' +
+      '</div>'
+    );
+    wireChoiceGrids(modalBodyEl);
+
+    var responsavelSelecionados = [];
+    var responsavelBtn = document.getElementById("fEntResponsavelBtn");
+    var responsavelValueEl = document.getElementById("fEntResponsavelValue");
+    function renderResponsavelValue(){
+      if(responsavelSelecionados.length){
+        responsavelValueEl.textContent = responsavelSelecionados.join(", ");
+        responsavelValueEl.classList.remove("placeholder");
+      } else {
+        responsavelValueEl.textContent = "Selecione...";
+        responsavelValueEl.classList.add("placeholder");
+      }
+    }
+    responsavelBtn.addEventListener("click", function(e){
+      e.preventDefault();
+      openFieldMultiMenu(responsavelBtn, "responsavel", RESPONSAVEIS_OPCOES, responsavelSelecionados, renderResponsavelValue);
+    });
+
+    var campanhaSelect = document.getElementById("fEntCampanha");
+    var camposFaseWrap = document.getElementById("fEntCamposFase");
+    var tipoAcaoCategoriaSel = document.getElementById("fEntTipoAcaoCategoria");
+    var tipoAcaoSubtipoWrap = document.getElementById("fEntTipoAcaoSubtipoWrap");
+    var tipoAcaoSubtipoContainer = document.getElementById("fEntTipoAcaoSubtipos");
+
+    function tipoDaCampanhaAtual(){
+      var c = campanhaById(campanhaSelect.value);
+      return c ? c.tipo : "produto";
+    }
+    function faseAtual(){
+      return getCheckedValue("entFase");
+    }
+    function renderCategorias(){
+      var valorAtual = tipoAcaoCategoriaSel.value;
+      var categorias = categoriasParaTipo(tipoDaCampanhaAtual(), faseAtual());
+      tipoAcaoCategoriaSel.innerHTML = '<option value="" style="color:var(--text-faint);">Selecione uma opção</option>' +
+        categorias.map(function(c){ return '<option value="'+escapeAttr(c.categoria)+'">'+escapeHtml(c.categoria)+'</option>'; }).join("");
+      var aindaExiste = categorias.some(function(c){ return c.categoria === valorAtual; });
+      tipoAcaoCategoriaSel.value = aindaExiste ? valorAtual : "";
+      renderSubtipos();
+    }
+    function renderSubtipos(){
+      var subtipos = subtiposParaCategoria(tipoAcaoCategoriaSel.value, tipoDaCampanhaAtual());
+      if(!tipoAcaoCategoriaSel.value || !subtipos.length){
+        tipoAcaoSubtipoWrap.hidden = true;
+        tipoAcaoSubtipoContainer.innerHTML = "";
+        return;
+      }
+      tipoAcaoSubtipoWrap.hidden = false;
+      tipoAcaoSubtipoContainer.innerHTML = subtipos.map(function(s){
+        return '<label class="choice-pill"><input type="radio" name="entTipoAcaoSubtipo" value="'+escapeAttr(s)+'">'+escapeHtml(s)+'</label>';
+      }).join("");
+      wireChoiceGrids(tipoAcaoSubtipoContainer);
+    }
+    campanhaSelect.addEventListener("change", renderCategorias);
+    tipoAcaoCategoriaSel.addEventListener("change", renderSubtipos);
+    modalBodyEl.querySelectorAll('input[name="entFase"]').forEach(function(radio){
+      radio.addEventListener("change", function(){
+        camposFaseWrap.hidden = false;
+        renderCategorias();
+      });
+    });
+
+    if(prefill){
+      campanhaSelect.value = prefill.campanhaId;
+      campanhaSelect.dispatchEvent(new Event("change"));
+
+      var faseRadio = modalBodyEl.querySelector('input[name="entFase"][value="'+prefill.fase+'"]');
+      if(faseRadio){
+        faseRadio.checked = true;
+        faseRadio.dispatchEvent(new Event("change"));
+      }
+
+      tipoAcaoCategoriaSel.value = prefill.tipoAcaoCategoria || "";
+      tipoAcaoCategoriaSel.dispatchEvent(new Event("change"));
+
+      if(prefill.tipoAcaoSubtipo){
+        var subRadio = tipoAcaoSubtipoContainer.querySelector('input[name="entTipoAcaoSubtipo"][value="'+prefill.tipoAcaoSubtipo+'"]');
+        if(subRadio){
+          subRadio.checked = true;
+          subRadio.dispatchEvent(new Event("change"));
+        }
+      }
+
+      document.getElementById("fEntTitulo").value = prefill.titulo || "";
+      document.getElementById("fEntData").value = prefill.data || "";
+      document.getElementById("fEntDescricao").value = prefill.descricao || "";
+      responsavelSelecionados = (prefill.responsaveis || []).slice();
+      renderResponsavelValue();
+    }
+
+    document.getElementById("fEntCancel").addEventListener("click", closeModal);
+    document.getElementById("fEntSalvar").addEventListener("click", function(){
+      var dataInput = document.getElementById("fEntData");
+      var tituloInput = document.getElementById("fEntTitulo");
+      var data = dataInput.value;
+      var titulo = tituloInput.value.trim();
+      if(!data){ dataInput.focus(); return; }
+      if(!titulo){ tituloInput.focus(); return; }
+      var campanhaId = document.getElementById("fEntCampanha").value;
+      var fase = faseAtual();
+      var tipoAcaoCategoria = tipoAcaoCategoriaSel.value;
+      var tipoAcaoSubtipo = getCheckedValue("entTipoAcaoSubtipo");
+      var responsaveis = responsavelSelecionados.slice();
+      var descricao = document.getElementById("fEntDescricao").value.trim();
+      var tipos = tipoAcaoCategoria ? [slugify(tipoAcaoCategoria)] : [];
+
+      var editId = prefill && prefill.editId;
+      var existente = editId ? store.entregas.filter(function(x){ return x.id === editId; })[0] : null;
+
+      var dadosEntrega = {
+        campanhaId: campanhaId,
+        data: data,
+        titulo: titulo,
+        tipos: tipos,
+        fase: fase,
+        tipoAcaoCategoria: tipoAcaoCategoria,
+        tipoAcaoSubtipo: tipoAcaoSubtipo,
+        responsaveis: responsaveis,
+        descricao: descricao
+      };
+
+      var entrega;
+      if(existente){
+        removeChip(existente.id);
+        Object.assign(existente, dadosEntrega);
+        entrega = existente;
+      } else {
+        entrega = Object.assign({ id: uid("e"), status: "planejado" }, dadosEntrega);
+        store.entregas.push(entrega);
+      }
+      saveStore();
+
+      if(existente){
+        supabaseClient.from("entregas").update({ payload: entrega, updated_at: new Date().toISOString() }).eq("id", entrega.id).then(function(res){
+          if(res.error){ alert("Erro ao salvar entrega: " + res.error.message); }
+        });
+      } else {
+        supabaseClient.from("entregas").insert({ id: entrega.id, campanha_id: entrega.campanhaId, payload: entrega }).then(function(res){
+          if(res.error){ alert("Erro ao criar entrega: " + res.error.message); }
+        });
+      }
+
+      if(tipoAcaoCategoria){ ensureTypeButton(slugify(tipoAcaoCategoria), tipoAcaoCategoria); }
+      ensureChip(entrega);
+      refreshStatusControls();
+      applyFilters();
+      paintToday();
+
+      var campanhaSel = campanhaById(campanhaId);
+      closeModal();
+      if(!existente){
+        sugerirProximaCadencia(entrega, campanhaSel);
+      }
+    });
+  }
+
+  document.getElementById("btnNovaCampanha").addEventListener("click", function(){ openCampanhaTipoModal(); });
+  document.getElementById("btnNovaEntrega").addEventListener("click", openEntregaModal);
+})();
+</script>
+</body>
+</html>

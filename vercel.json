@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/campanhas-marketing-2026.html" }
+  ]
+}
