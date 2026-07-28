@@ -514,11 +514,7 @@
     </div>
     <div class="eyebrow">Marketing</div>
     <h1>Campanhas 2026</h1>
-    <p>Entre com o login da equipe para continuar.</p>
-    <div class="form-field">
-      <label for="loginEmail">E-mail</label>
-      <input type="email" id="loginEmail" placeholder="equipe@empresa.com">
-    </div>
+    <p>Digite a senha de acesso da equipe para continuar.</p>
     <div class="form-field">
       <label for="loginSenha">Senha</label>
       <input type="password" id="loginSenha" placeholder="••••••••">
@@ -858,10 +854,10 @@
 (function(){
   var SUPABASE_URL = "https://sdapyfcvfrybvphfqkjl.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_aTMxy2K97vkO8_ThDkNQCg_g9Iibjru";
+  var LOGIN_EMAIL_FIXO = "equipe.campanhas2026@matera.internal";
   var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   var loginOverlay = document.getElementById("loginOverlay");
-  var loginEmailInput = document.getElementById("loginEmail");
   var loginSenhaInput = document.getElementById("loginSenha");
   var loginErro = document.getElementById("loginErro");
   var loginBtn = document.getElementById("loginBtn");
@@ -872,16 +868,15 @@
   }
   function tentarLogin(){
     loginErro.style.display = "none";
-    var email = loginEmailInput.value.trim();
     var senha = loginSenhaInput.value;
-    if(!email || !senha){ mostrarErroLogin("Preencha e-mail e senha."); return; }
+    if(!senha){ mostrarErroLogin("Digite a senha."); return; }
     loginBtn.disabled = true;
     loginBtn.textContent = "Entrando...";
-    supabaseClient.auth.signInWithPassword({ email: email, password: senha }).then(function(res){
+    supabaseClient.auth.signInWithPassword({ email: LOGIN_EMAIL_FIXO, password: senha }).then(function(res){
       loginBtn.disabled = false;
       loginBtn.textContent = "Entrar";
       if(res.error){
-        mostrarErroLogin("Login incorreto. Tente novamente.");
+        mostrarErroLogin("Senha incorreta. Tente novamente.");
         loginSenhaInput.value = "";
         loginSenhaInput.focus();
         return;
@@ -891,16 +886,14 @@
     });
   }
   loginBtn.addEventListener("click", tentarLogin);
-  [loginEmailInput, loginSenhaInput].forEach(function(input){
-    input.addEventListener("keydown", function(e){ if(e.key === "Enter") tentarLogin(); });
-  });
+  loginSenhaInput.addEventListener("keydown", function(e){ if(e.key === "Enter") tentarLogin(); });
 
   supabaseClient.auth.getSession().then(function(res){
     if(res.data && res.data.session){
       loginOverlay.remove();
       iniciarApp();
     } else {
-      loginEmailInput.focus();
+      loginSenhaInput.focus();
     }
   });
 
